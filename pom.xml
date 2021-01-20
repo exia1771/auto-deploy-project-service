@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.exia1771</groupId>
-    <artifactId>auto-deploy-project-servers</artifactId>
+    <artifactId>auto-deploy-project-service</artifactId>
     <version>0.0.1</version>
     <packaging>pom</packaging>
 
@@ -29,6 +29,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring.boot.dependencies.version}</version>
+                <scope>import</scope>
             </dependency>
 
             <!-- SpringCloud Alibaba -->
@@ -36,6 +37,7 @@
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>
                 <version>${spring.cloud.alibaba.dependencies.version}</version>
+                <scope>import</scope>
             </dependency>
 
             <!-- fastjson -->
