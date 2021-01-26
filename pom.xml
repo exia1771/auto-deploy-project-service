@@ -5,8 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.exia1771</groupId>
-    <artifactId>auto-deploy-project-service</artifactId>
+    <artifactId>auto-deploy-project-server</artifactId>
     <version>0.0.1</version>
+    <modules>
+        <module>common</module>
+        <module>api</module>
+    </modules>
     <packaging>pom</packaging>
 
     <name>AutoDeployProjectService-${project.version}</name>
@@ -18,6 +22,8 @@
         <spring.boot.dependencies.version>2.3.5.RELEASE</spring.boot.dependencies.version>
         <spring.cloud.alibaba.dependencies.version>2.2.1.RELEASE</spring.cloud.alibaba.dependencies.version>
         <fastjson.version>1.2.60</fastjson.version>
+        <mybatis.plus.version>3.4.2</mybatis.plus.version>
+        <hutool.version>5.5.7</hutool.version>
     </properties>
 
     <dependencyManagement>
@@ -30,6 +36,7 @@
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring.boot.dependencies.version}</version>
                 <scope>import</scope>
+                <type>pom</type>
             </dependency>
 
             <!-- SpringCloud Alibaba -->
@@ -38,6 +45,13 @@
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>
                 <version>${spring.cloud.alibaba.dependencies.version}</version>
                 <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis.plus.version}</version>
             </dependency>
 
             <!-- fastjson -->
@@ -45,6 +59,12 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-core</artifactId>
+                <version>${hutool.version}</version>
             </dependency>
 
         </dependencies>
