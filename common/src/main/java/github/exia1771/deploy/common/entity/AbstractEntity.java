@@ -1,19 +1,20 @@
 package github.exia1771.deploy.common.entity;
 
 import github.exia1771.deploy.common.entity.dto.AbstractDTO;
+import github.exia1771.deploy.common.util.Dates;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 public abstract class AbstractEntity<T extends Serializable> {
 
     private T id;
     private Long creatorId;
-    private LocalDateTime creationTime = LocalDateTime.now();
+    private Date creationTime;
     private Long updaterId;
-    private LocalDateTime updateTime;
+    private Date updateTime;
 
     public AbstractEntity() {
     }

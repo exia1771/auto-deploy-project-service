@@ -7,9 +7,10 @@ import java.util.Map;
 
 public interface BaseService<K extends Serializable, T extends AbstractEntity<K>> {
 
-    boolean save(T t);
+    void save(T t);
 
     T findById(K id);
 
-    boolean isExisted(Map<String, Object> params);
+    Boolean isExisted(Map<String, Object> params);
+
 }

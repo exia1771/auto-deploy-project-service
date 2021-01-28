@@ -4,9 +4,7 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Arrays;
 
-@Getter
 public abstract class CommonResponse extends ResponseEntity<ResponseBody> {
 
     private CommonResponse(HttpStatus status) {
@@ -25,8 +23,8 @@ public abstract class CommonResponse extends ResponseEntity<ResponseBody> {
         return ResponseEntity.badRequest().body(responseBody);
     }
 
-    public static <T> ResponseEntity<ResponseBody> of(Object t, HttpStatus httpStatus, String... message) {
-        ResponseBody responseBody = new ResponseBody(t, Arrays.toString(message));
+    public static <T> ResponseEntity<ResponseBody> of(Object t, HttpStatus httpStatus, String message) {
+        ResponseBody responseBody = new ResponseBody(t, message);
         responseBody.setStatus(httpStatus.value());
         return ResponseEntity.status(httpStatus).body(responseBody);
     }

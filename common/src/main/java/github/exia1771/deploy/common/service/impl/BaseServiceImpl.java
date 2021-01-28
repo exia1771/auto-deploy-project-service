@@ -4,11 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import github.exia1771.deploy.common.entity.AbstractEntity;
 import github.exia1771.deploy.common.service.BaseService;
+import github.exia1771.deploy.common.util.Dates;
 
 import java.io.Serializable;
 import java.util.Map;
 
-public class BaseServiceImpl<K extends Serializable, T extends AbstractEntity<K>> implements BaseService<K, T> {
+public abstract class BaseServiceImpl<K extends Serializable, T extends AbstractEntity<K>> implements BaseService<K, T> {
 
     private final BaseMapper<T> mapper;
 
@@ -16,15 +17,20 @@ public class BaseServiceImpl<K extends Serializable, T extends AbstractEntity<K>
         this.mapper = mapper;
     }
 
+    protected void beforeInsert(T t) {
+    }
+
     @Override
-    public boolean save(T t) {
-        int result;
+    public void save(T t) {
         if (t.getId() == null) {
-            result = mapper.insert(t);
+            beforeInsert(t);
+            t.setCreationTime(Dates.now());
+            t.setUpdateTime(Dates.now());
+            mapper.insert(t);
         } else {
-            result = mapper.updateById(t);
+            t.setUpdateTime(Dates.now());
+            mapper.updateById(t);
         }
-        return result != 0;
     }
 
     @Override
@@ -33,7 +39,7 @@ public class BaseServiceImpl<K extends Serializable, T extends AbstractEntity<K>
     }
 
     @Override
-    public boolean isExisted(Map<String, Object> params) {
+    public Boolean isExisted(Map<String, Object> params) {
         QueryWrapper<T> wrapper = new QueryWrapper<>();
         wrapper.allEq(params);
         return mapper.selectOne(wrapper) != null;
