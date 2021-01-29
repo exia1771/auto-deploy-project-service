@@ -24,4 +24,5 @@ public class Role extends AbstractEntity<Long> {
         BeanUtils.copyProperties(this, target);
         return target;
     }
+
 }

@@ -9,9 +9,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private static final String[] METHODS = {"GET", "POST", "PUT", "DELETE"};
-    private static final String ALL_MAPPING = "/**";
-    private static final String ALL_ORIGINAL = "*";
+    public static final String[] METHODS = {"GET", "POST", "PUT", "DELETE"};
+    public static final String ALL_MAPPING = "/**";
+    public static final String ALL_ORIGINAL = "*";
     private static final String PUBLIC_USER_MAPPING = "/user/public/**";
 
     @Override

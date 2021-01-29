@@ -1,7 +1,6 @@
 package github.exia1771.deploy.common.entity;
 
 import github.exia1771.deploy.common.entity.dto.AbstractDTO;
-import github.exia1771.deploy.common.util.Dates;
 import lombok.Data;
 
 import java.io.Serializable;

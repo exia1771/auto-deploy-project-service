@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ValidationException;
 
 @RestControllerAdvice
 public class ControllerExceptionHandler {
@@ -19,9 +20,15 @@ public class ControllerExceptionHandler {
         return CommonResponse.of(null, HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ResponseBody> validationExceptionHandler(Exception e,
+                                                                   HttpServletRequest request) throws Exception {
+        return CommonResponse.of(null, HttpStatus.FORBIDDEN, e.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ResponseBody> exceptionHandler(Exception e,
-                                                                HttpServletRequest request) throws Exception {
+                                                         HttpServletRequest request) throws Exception {
         return CommonResponse.of(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 }

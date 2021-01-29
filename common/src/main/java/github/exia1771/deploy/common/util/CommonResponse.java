@@ -1,6 +1,5 @@
 package github.exia1771.deploy.common.util;
 
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -15,6 +14,10 @@ public abstract class CommonResponse extends ResponseEntity<ResponseBody> {
         ResponseBody responseBody = new ResponseBody(t);
         responseBody.setStatus(HttpStatus.OK.value());
         return ResponseEntity.ok(responseBody);
+    }
+
+    public static <T> ResponseEntity<ResponseBody> success() {
+        return success(null);
     }
 
     public static <T> ResponseEntity<ResponseBody> error(Object t) {

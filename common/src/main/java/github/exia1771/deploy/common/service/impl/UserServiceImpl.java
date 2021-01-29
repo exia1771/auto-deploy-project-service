@@ -7,7 +7,7 @@ import github.exia1771.deploy.common.exception.ServiceException;
 import github.exia1771.deploy.common.mapper.UserMapper;
 import github.exia1771.deploy.common.service.UserService;
 import github.exia1771.deploy.common.util.Commons;
-import github.exia1771.deploy.common.util.Tokens;
+import github.exia1771.deploy.common.util.Users;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,8 +23,7 @@ public class UserServiceImpl extends BaseServiceImpl<Long, User> implements User
     private static final String USER_NAME_NOT_EXISTED = "请输入正确的用户名!";
     private static final String USER_NAME = "username";
     private static final String PASSWORD_NOT_CORRECT = "密码错误!";
-    private static final String[] params = {"userId", "roleId"};
-
+    private static final Long DEFAULT_ROLE_ID = 1L;
 
     public UserServiceImpl(UserMapper mapper) {
         super(mapper);
@@ -50,21 +49,16 @@ public class UserServiceImpl extends BaseServiceImpl<Long, User> implements User
         user.setId(Commons.getId());
         user.setCreatorId(user.getId());
         user.setUpdaterId(user.getId());
-        user.setRoleId(1L);
+        user.setRoleId(DEFAULT_ROLE_ID);
     }
 
 
     @Override
     public UserDTO submit(User user) {
+
         save(user);
-
-        Map<String, Object> claims = new HashMap<>();
-
-        claims.put(params[0], user.getId());
-        claims.put(params[1], user.getRoleId());
-
         UserDTO userDTO = user.toDTO();
-        userDTO.setToken(Tokens.create(claims));
+        userDTO.setToken(Users.getUserToken(user));
         return userDTO;
     }
 
@@ -76,9 +70,15 @@ public class UserServiceImpl extends BaseServiceImpl<Long, User> implements User
     }
 
     @Override
+    public void logout() {
+        Users.SimpleUser user = Users.getUser();
+        Users.discardUserToken(user.getUserId().toString());
+    }
+
+    @Override
     public UserDTO login(User user) {
         User savedUser = findByName(user.getUsername());
-        if(savedUser == null){
+        if (savedUser == null) {
             throw new ServiceException(USER_NAME_NOT_EXISTED);
         }
         if (!savedUser.getPassword().equals(user.getPassword())) {
@@ -86,22 +86,14 @@ public class UserServiceImpl extends BaseServiceImpl<Long, User> implements User
         }
         UserDTO userDTO = savedUser.toDTO();
 
-        Map<String, Object> map = new HashMap<>();
-        map.put(params[0], savedUser.getId());
-        map.put(params[1], savedUser.getRoleId());
-
-        userDTO.setToken(Tokens.create(map));
+        userDTO.setToken(Users.getUserToken(savedUser));
 
         return userDTO;
     }
 
     @Override
-    public UserDTO login(String token) {
-        Map<String, Object> parse = Tokens.parse(token);
-        Object userId = parse.getOrDefault(params[0], null);
-        if(userId == null){
-            throw new ServiceException(Tokens.TOKEN_ILLEGAL);
-        }
-        return findById(Long.valueOf(userId.toString())).toDTO();
+    public UserDTO login() {
+        Users.SimpleUser user = Users.getUser();
+        return findById(user.getUserId()).toDTO();
     }
 }

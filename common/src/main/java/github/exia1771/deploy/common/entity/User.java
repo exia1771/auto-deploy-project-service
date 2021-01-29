@@ -5,16 +5,29 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.beans.BeanUtils;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class User extends AbstractEntity<Long> {
 
-    private Long roleId;
+    @NotNull
+    @NotBlank
+    @Size(min = 6, max = 255)
     private String username;
-    private String password;
-    private String email;
-    private String telephone;
 
+    private Long roleId;
+
+    @NotNull
+    @NotBlank
+    @Size(min = 6, max = 255)
+    private String password;
+
+    private String email;
+
+    private String telephone;
 
     public User() {
     }

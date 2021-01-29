@@ -11,7 +11,9 @@ public interface UserService extends BaseService<Long, User> {
 
     UserDTO login(User user);
 
-    UserDTO login(String token);
+    UserDTO login();
+
+    void logout();
 
     User findByName(String name);
 }

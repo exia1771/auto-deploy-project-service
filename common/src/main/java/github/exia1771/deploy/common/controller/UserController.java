@@ -7,6 +7,8 @@ import github.exia1771.deploy.common.util.ResponseBody;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 
 @RestController
 @RequestMapping("/user")
@@ -24,7 +26,7 @@ public class UserController {
     }
 
     @PostMapping("/public/submit")
-    public ResponseEntity<ResponseBody> submit(@RequestBody User user) {
+    public ResponseEntity<ResponseBody> submit(@RequestBody @Valid User user) {
         return CommonResponse.success(userService.submit(user));
     }
 
@@ -33,8 +35,14 @@ public class UserController {
         return CommonResponse.success(userService.login(user));
     }
 
-    @GetMapping("/public/login")
-    public ResponseEntity<ResponseBody> login(@RequestParam("token") String token){
-        return CommonResponse.success(userService.login(token));
+    @GetMapping("/logout")
+    public ResponseEntity<ResponseBody> logout() {
+        userService.logout();
+        return CommonResponse.success();
+    }
+
+    @GetMapping("/login")
+    public ResponseEntity<ResponseBody> login() {
+        return CommonResponse.success(userService.login());
     }
 }

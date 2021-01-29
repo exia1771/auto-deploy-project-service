@@ -1,5 +1,6 @@
 package github.exia1771.deploy.common.util;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -23,10 +24,22 @@ public abstract class Dates {
         return LocalDateTime.ofInstant(date.toInstant(), ZONE_ID);
     }
 
-    public static Date expire(Date date, TemporalAmount amount) {
+    public static Date plus(Date date, TemporalAmount amount) {
         LocalDateTime localDateTime = toLocalDateTime(date);
         return toDate(localDateTime.plus(amount));
     }
 
+    public static Duration minus(Date start, Date end) {
+        return Duration.between(toLocalDateTime(start), toLocalDateTime(end));
+    }
+
+    public static Duration minus(Date start, TemporalAmount amount) {
+        LocalDateTime minus = toLocalDateTime(start).minus(amount);
+        return Duration.ofNanos(minus.getNano());
+    }
+
+    public static Duration minus(TemporalAmount start, TemporalAmount amount) {
+        return Duration.from(start).minus(Duration.from(amount));
+    }
 
 }
