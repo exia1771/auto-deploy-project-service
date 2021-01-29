@@ -25,8 +25,7 @@ public abstract class Dates {
 
     public static Date expire(Date date, TemporalAmount amount) {
         LocalDateTime localDateTime = toLocalDateTime(date);
-        localDateTime.plus(amount);
-        return toDate(localDateTime);
+        return toDate(localDateTime.plus(amount));
     }
 
 

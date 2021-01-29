@@ -18,14 +18,23 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/check")
+    @GetMapping("/public/check")
     public ResponseEntity<ResponseBody> isExistedName(@RequestParam("name") String name) {
         return CommonResponse.success(userService.isExistedName(name));
     }
 
-    @PostMapping("/submit")
+    @PostMapping("/public/submit")
     public ResponseEntity<ResponseBody> submit(@RequestBody User user) {
         return CommonResponse.success(userService.submit(user));
     }
 
+    @PostMapping("/public/login")
+    public ResponseEntity<ResponseBody> login(@RequestBody User user) {
+        return CommonResponse.success(userService.login(user));
+    }
+
+    @GetMapping("/public/login")
+    public ResponseEntity<ResponseBody> login(@RequestParam("token") String token){
+        return CommonResponse.success(userService.login(token));
+    }
 }

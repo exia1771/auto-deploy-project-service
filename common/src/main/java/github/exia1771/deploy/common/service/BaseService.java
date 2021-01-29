@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface BaseService<K extends Serializable, T extends AbstractEntity<K>> {
 
-    void save(T t);
+    T save(T t);
 
     T findById(K id);
 

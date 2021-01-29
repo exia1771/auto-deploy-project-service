@@ -1,6 +1,5 @@
 package github.exia1771.deploy.common.util;
 
-import github.exia1771.deploy.common.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 
@@ -11,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Tokens {
+
+    public static final String TOKEN_ILLEGAL = "授权已过期，需要重新登录!";
 
     private static final Key KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private static final String SUBJECT = "EXIA1771";

@@ -21,7 +21,7 @@ public abstract class BaseServiceImpl<K extends Serializable, T extends Abstract
     }
 
     @Override
-    public void save(T t) {
+    public T save(T t) {
         if (t.getId() == null) {
             beforeInsert(t);
             t.setCreationTime(Dates.now());
@@ -31,6 +31,7 @@ public abstract class BaseServiceImpl<K extends Serializable, T extends Abstract
             t.setUpdateTime(Dates.now());
             mapper.updateById(t);
         }
+        return t;
     }
 
     @Override

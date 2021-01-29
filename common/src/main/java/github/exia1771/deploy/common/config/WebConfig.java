@@ -1,7 +1,9 @@
 package github.exia1771.deploy.common.config;
 
+import github.exia1771.deploy.common.filter.TokenInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -10,6 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
     private static final String[] METHODS = {"GET", "POST", "PUT", "DELETE"};
     private static final String ALL_MAPPING = "/**";
     private static final String ALL_ORIGINAL = "*";
+    private static final String PUBLIC_USER_MAPPING = "/user/public/**";
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -17,5 +20,12 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins(ALL_ORIGINAL)
                 .allowCredentials(true)
                 .allowedMethods(METHODS);
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new TokenInterceptor())
+                .addPathPatterns(ALL_MAPPING)
+                .excludePathPatterns(PUBLIC_USER_MAPPING);
     }
 }

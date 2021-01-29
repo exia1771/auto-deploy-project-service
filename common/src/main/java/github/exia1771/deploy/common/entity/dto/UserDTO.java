@@ -11,5 +11,6 @@ public class UserDTO extends AbstractDTO<Long>{
     private String username;
     private String email;
     private String telephone;
+    private String token;
 
 }
