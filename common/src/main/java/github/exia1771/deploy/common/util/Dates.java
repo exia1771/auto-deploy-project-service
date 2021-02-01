@@ -30,16 +30,15 @@ public abstract class Dates {
     }
 
     public static Duration minus(Date start, Date end) {
-        return Duration.between(toLocalDateTime(start), toLocalDateTime(end));
+        return minus(Duration.ofMillis(start.getTime()), Duration.ofMillis(end.getTime()));
     }
 
-    public static Duration minus(Date start, TemporalAmount amount) {
-        LocalDateTime minus = toLocalDateTime(start).minus(amount);
-        return Duration.ofNanos(minus.getNano());
+    public static Duration minus(Date start, TemporalAmount end) {
+        return minus(Duration.ofMillis(start.getTime()), end);
     }
 
-    public static Duration minus(TemporalAmount start, TemporalAmount amount) {
-        return Duration.from(start).minus(Duration.from(amount));
+    public static Duration minus(TemporalAmount start, TemporalAmount end) {
+        return Duration.from(end).minus(Duration.from(start));
     }
 
 }

@@ -25,6 +25,8 @@ public class User extends AbstractEntity<Long> {
     @Size(min = 6, max = 255)
     private String password;
 
+    private String avatarAddress;
+
     private String email;
 
     private String telephone;

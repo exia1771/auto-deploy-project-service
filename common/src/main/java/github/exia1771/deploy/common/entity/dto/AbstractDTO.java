@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class AbstractDTO<T> {
-    T id;
+    private T id;
 }

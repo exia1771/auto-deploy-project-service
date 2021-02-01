@@ -1,12 +1,12 @@
 package github.exia1771.deploy.common.filter;
 
 import com.alibaba.fastjson.JSON;
-import github.exia1771.deploy.common.config.WebConfig;
 import github.exia1771.deploy.common.entity.User;
 import github.exia1771.deploy.common.util.ResponseBody;
 import github.exia1771.deploy.common.util.Tokens;
 import github.exia1771.deploy.common.util.Users;
 import io.jsonwebtoken.JwtException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -14,46 +14,66 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-
+@Slf4j
 public class TokenInterceptor implements HandlerInterceptor {
 
-    private static final String TOKEN_HEADER = "Authorization";
-    private static final String TOKEN_PREFIX = "Bearer ";
-    private static final String CONTENT_TYPE_HEADER = "Content-Type";
-    private static final String JSON_TYPE = "application/json";
+    private static final String CONTENT_TYPE = "Content-Type";
+    private static final String APPLICATION_JSON = "application/json";
     private static final String ALLOW_ORIGINAL = "Access-Control-Allow-Origin";
-    private static final String OPTIONS_METHOD = "OPTIONS";
+    private static final String ALLOW_CREDENTIALS = "Access-Control-Allow-Credentials";
+    private static final String ALLOW_METHODS = "Access-Control-Allow-Methods";
     private static final String ALLOW_HEADERS = "Access-Control-Allow-Headers";
-    private static final String EXPOSE_HEADERS = "Access-Control-Expose-Headers";
+    private static final String METHODS = "GET, HEAD, POST, PUT, DELETE, OPTIONS, PATCH";
+    private static final String OPTIONS_METHOD = "OPTIONS";
+    private static final String DOMAIN = "http://localhost:8080";
 
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String header = request.getHeader(TOKEN_HEADER);
-
-        response.setHeader(CONTENT_TYPE_HEADER, JSON_TYPE);
-        response.setHeader(ALLOW_ORIGINAL, WebConfig.ALL_ORIGINAL);
-        response.setHeader(ALLOW_HEADERS, TOKEN_HEADER);
-        response.setHeader(EXPOSE_HEADERS, TOKEN_HEADER);
-        response.setCharacterEncoding(Charset.defaultCharset().displayName());
-        response.setStatus(HttpStatus.OK.value());
 
         if (OPTIONS_METHOD.equals(request.getMethod())) {
+            response.setHeader(CONTENT_TYPE, APPLICATION_JSON);
+            response.setHeader(ALLOW_ORIGINAL, DOMAIN);
+            response.setHeader(ALLOW_CREDENTIALS, Boolean.toString(true));
+            response.setHeader(ALLOW_METHODS, METHODS);
+            response.setHeader(ALLOW_HEADERS, CONTENT_TYPE);
+            response.setCharacterEncoding(Charset.defaultCharset().displayName());
+            response.setStatus(HttpStatus.OK.value());
             return true;
         }
 
 
-        if (header == null) {
+        String cookieToken = null;
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies == null) {
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            ResponseBody responseBody = new ResponseBody(null, Tokens.COOKIE_NOT_FOUND);
+            response.getWriter().print(JSON.toJSONString(responseBody));
+            return false;
+        }
+
+        for (Cookie cookie : cookies) {
+            if (Tokens.TOKEN_KEY.equals(cookie.getName())) {
+                cookieToken = cookie.getValue();
+            }
+        }
+
+        if (cookieToken == null) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             ResponseBody responseBody = new ResponseBody(null, Tokens.TOKEN_NOT_FOUND);
             response.getWriter().print(JSON.toJSONString(responseBody));
             return false;
         }
 
-        if (!header.startsWith(TOKEN_PREFIX)) {
+        cookieToken = URLDecoder.decode(cookieToken, StandardCharsets.UTF_8.displayName());
+
+        if (!cookieToken.startsWith(Tokens.TOKEN_PREFIX)) {
             response.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
             ResponseBody responseBody = new ResponseBody(null, Tokens.TOKEN_ILLEGAL);
             response.getWriter().print(JSON.toJSONString(responseBody));
@@ -62,7 +82,7 @@ public class TokenInterceptor implements HandlerInterceptor {
         } else {
 
             try {
-                String token = header.substring(TOKEN_PREFIX.length());
+                String token = cookieToken.substring(Tokens.TOKEN_PREFIX.length());
                 Map<String, Object> parse = Tokens.parse(token);
                 String userId = parse.get(Users.Params.USER_ID.getValue()).toString();
                 String roleId = parse.get(Users.Params.ROLE_ID.getValue()).toString();
@@ -78,10 +98,10 @@ public class TokenInterceptor implements HandlerInterceptor {
                     User user = new User();
                     user.setId(Long.valueOf(userId));
                     user.setRoleId(Long.valueOf(roleId));
-                    String newToken = Users.getUserToken(user);
-                    response.setHeader(TOKEN_HEADER, newToken);
+                    String refreshToken = Users.getUserToken(user);
+                    log.info("即将过期，刷新后的token =>{}", refreshToken);
+                    Tokens.setCookie(response, refreshToken);
                 }
-
                 Users.setUser(new Users.SimpleUser(Long.valueOf(userId), Long.valueOf(roleId)));
 
                 return true;
@@ -98,4 +118,13 @@ public class TokenInterceptor implements HandlerInterceptor {
 
     }
 
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+
+    }
 }

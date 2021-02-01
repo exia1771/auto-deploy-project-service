@@ -39,14 +39,6 @@ public class Users {
         return simpleUser;
     }
 
-    public static SimpleUser getUserFromToken(String token) {
-        Claims claims = Tokens.parse(token);
-        return new SimpleUser(
-                claims.get(Params.USER_ID.value, Long.class),
-                claims.get(Params.ROLE_ID.value, Long.class)
-        );
-    }
-
     public static String getUserToken(User user) {
         Map<String, Object> map = new HashMap<>();
         map.put(Users.Params.USER_ID.getValue(), user.getId());

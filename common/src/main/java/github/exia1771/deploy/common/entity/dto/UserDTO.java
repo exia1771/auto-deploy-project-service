@@ -9,8 +9,9 @@ public class UserDTO extends AbstractDTO<Long>{
 
     private Long roleId;
     private String username;
+    private String password;
+    private String avatarAddress;
     private String email;
     private String telephone;
-    private String token;
 
 }

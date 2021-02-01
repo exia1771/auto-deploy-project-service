@@ -6,8 +6,10 @@ import github.exia1771.deploy.common.util.CommonResponse;
 import github.exia1771.deploy.common.util.ResponseBody;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.UnsupportedEncodingException;
 
 
 @RestController
@@ -26,12 +28,12 @@ public class UserController {
     }
 
     @PostMapping("/public/submit")
-    public ResponseEntity<ResponseBody> submit(@RequestBody @Valid User user) {
+    public ResponseEntity<ResponseBody> submit(@RequestBody @Valid User user) throws UnsupportedEncodingException {
         return CommonResponse.success(userService.submit(user));
     }
 
     @PostMapping("/public/login")
-    public ResponseEntity<ResponseBody> login(@RequestBody User user) {
+    public ResponseEntity<ResponseBody> login(@RequestBody User user) throws UnsupportedEncodingException {
         return CommonResponse.success(userService.login(user));
     }
 
@@ -44,5 +46,15 @@ public class UserController {
     @GetMapping("/login")
     public ResponseEntity<ResponseBody> login() {
         return CommonResponse.success(userService.login());
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<ResponseBody> updateBasicInfo(@RequestBody User user) {
+        return CommonResponse.success(userService.updateBasicInfo(user));
+    }
+
+    @PostMapping("/avatar")
+    public ResponseEntity<ResponseBody> uploadAvatar(@RequestParam("avatar") MultipartFile file){
+        return CommonResponse.success(userService.uploadAvatar(file));
     }
 }
