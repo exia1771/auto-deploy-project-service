@@ -2,10 +2,10 @@ package github.exia1771.deploy.common.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import github.exia1771.deploy.common.entity.FileRequest;
 import github.exia1771.deploy.common.entity.User;
 import github.exia1771.deploy.common.entity.dto.FileDTO;
+import github.exia1771.deploy.common.entity.Password;
 import github.exia1771.deploy.common.entity.dto.UserDTO;
 import github.exia1771.deploy.common.exception.ServiceException;
 import github.exia1771.deploy.common.mapper.UserMapper;
@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -146,15 +145,19 @@ public class UserServiceImpl extends BaseServiceImpl<Long, User> implements User
     public UserDTO updateBasicInfo(User user) {
         validateUpdate(user);
 
-        Users.SimpleUser simpleUser = Users.getUser();
-        User saved = findById(simpleUser.getUserId());
+        User saved = getUser();
         saved.setEmail(user.getEmail());
         saved.setTelephone(user.getTelephone());
-        saved.setAvatarAddress(user.getAvatarAddress());
         saved = save(saved);
 
         return saved.toDTO();
     }
+
+    private User getUser() {
+        Users.SimpleUser simpleUser = Users.getUser();
+        return findById(simpleUser.getUserId());
+    }
+
 
     @Override
     public FileDTO uploadAvatar(MultipartFile file) {
@@ -172,10 +175,41 @@ public class UserServiceImpl extends BaseServiceImpl<Long, User> implements User
 
         FileDTO upload = fileService.upload(file, fileRequest);
         upload.setUrl(scheme + upload.getUrl());
-        updateBasicInfo(new User() {{
+        updateAvatar(new User() {{
             setAvatarAddress(upload.getUrl());
         }});
         return upload;
 
+    }
+
+    @Override
+    public UserDTO updateAvatar(User user) {
+
+        User saved = getUser();
+        saved.setAvatarAddress(user.getAvatarAddress());
+        saved = save(saved);
+
+        return saved.toDTO();
+    }
+
+    private void validatePassword(User user, Password password) {
+        if (!password.getNewPassword().equals(password.getConfirmedPassword())) {
+            throw new ServiceException("新密码与确认密码输入不一致!");
+        }
+
+        if (!user.getPassword().equals(password.getOldPassword())) {
+            throw new ServiceException("旧密码输入不正确!");
+        } else {
+            throw new ServiceException("新密码不能与旧密码相同!");
+        }
+    }
+
+    @Override
+    public void changePassword(Password password) {
+        User user = getUser();
+        validatePassword(user, password);
+
+        user.setPassword(password.getNewPassword());
+        save(user);
     }
 }

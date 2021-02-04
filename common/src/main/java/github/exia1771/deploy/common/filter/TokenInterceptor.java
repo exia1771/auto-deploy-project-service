@@ -36,13 +36,14 @@ public class TokenInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
+        response.setCharacterEncoding(StandardCharsets.UTF_8.displayName());
+
         if (OPTIONS_METHOD.equals(request.getMethod())) {
             response.setHeader(CONTENT_TYPE, APPLICATION_JSON);
             response.setHeader(ALLOW_ORIGINAL, DOMAIN);
             response.setHeader(ALLOW_CREDENTIALS, Boolean.toString(true));
             response.setHeader(ALLOW_METHODS, METHODS);
             response.setHeader(ALLOW_HEADERS, CONTENT_TYPE);
-            response.setCharacterEncoding(Charset.defaultCharset().displayName());
             response.setStatus(HttpStatus.OK.value());
             return true;
         }
@@ -99,7 +100,6 @@ public class TokenInterceptor implements HandlerInterceptor {
                     user.setId(Long.valueOf(userId));
                     user.setRoleId(Long.valueOf(roleId));
                     String refreshToken = Users.getUserToken(user);
-                    log.info("即将过期，刷新后的token =>{}", refreshToken);
                     Tokens.setCookie(response, refreshToken);
                 }
                 Users.setUser(new Users.SimpleUser(Long.valueOf(userId), Long.valueOf(roleId)));
@@ -118,13 +118,4 @@ public class TokenInterceptor implements HandlerInterceptor {
 
     }
 
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-
-    }
-
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-
-    }
 }

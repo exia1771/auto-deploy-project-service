@@ -1,6 +1,7 @@
 package github.exia1771.deploy.common.controller;
 
 import github.exia1771.deploy.common.entity.User;
+import github.exia1771.deploy.common.entity.Password;
 import github.exia1771.deploy.common.service.UserService;
 import github.exia1771.deploy.common.util.CommonResponse;
 import github.exia1771.deploy.common.util.ResponseBody;
@@ -56,5 +57,11 @@ public class UserController {
     @PostMapping("/avatar")
     public ResponseEntity<ResponseBody> uploadAvatar(@RequestParam("avatar") MultipartFile file){
         return CommonResponse.success(userService.uploadAvatar(file));
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<ResponseBody> changePassword(@RequestBody @Valid Password password){
+        userService.changePassword(password);
+        return CommonResponse.success();
     }
 }
