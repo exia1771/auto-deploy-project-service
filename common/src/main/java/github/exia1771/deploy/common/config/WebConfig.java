@@ -3,7 +3,6 @@ package github.exia1771.deploy.common.config;
 import github.exia1771.deploy.common.filter.TokenInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.SortParameters;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -18,6 +17,8 @@ public class WebConfig implements WebMvcConfigurer {
     private static final String PUBLIC_USER_MAPPING = "/user/public/**";
     private static final String FILE_RESOURCE_PREFIX = "file:/";
     private static final String FILE_RESOURCE_SUFFIX = "/";
+    @Value("${server.servlet.session.cookie.domain:http://localhost:8081}")
+    private String domain;
 
     @Value("${file.upload.mapping-url}")
     private String FILE_MAPPING_PATH;
@@ -41,7 +42,9 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new TokenInterceptor())
+        TokenInterceptor interceptor = new TokenInterceptor();
+        interceptor.setDOMAIN(domain);
+        registry.addInterceptor(interceptor)
                 .addPathPatterns(ALL_MAPPING)
                 .excludePathPatterns(PUBLIC_USER_MAPPING)
                 .excludePathPatterns(FILE_MAPPING_PATH + ALL_MAPPING);

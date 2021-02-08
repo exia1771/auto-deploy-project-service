@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 public class DateTest {
 
     @Test
-    void test01(){
+    void test01() {
         LocalDateTime now = LocalDateTime.now();
         System.out.println(now);
         now.plus(Duration.ofDays(3));

@@ -1,15 +1,15 @@
-package github.exia1771.deploy.common;
+package github.exia1771.deploy;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "github.exia1771.deploy")
 @MapperScan("github.exia1771.deploy.common.mapper")
-public class CommonApplication {
+public class IndexApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CommonApplication.class, args);
+        SpringApplication.run(IndexApplication.class, args);
     }
 
 }

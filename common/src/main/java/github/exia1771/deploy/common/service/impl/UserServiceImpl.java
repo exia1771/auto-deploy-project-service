@@ -3,9 +3,9 @@ package github.exia1771.deploy.common.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import github.exia1771.deploy.common.entity.FileRequest;
+import github.exia1771.deploy.common.entity.Password;
 import github.exia1771.deploy.common.entity.User;
 import github.exia1771.deploy.common.entity.dto.FileDTO;
-import github.exia1771.deploy.common.entity.Password;
 import github.exia1771.deploy.common.entity.dto.UserDTO;
 import github.exia1771.deploy.common.exception.ServiceException;
 import github.exia1771.deploy.common.mapper.UserMapper;
@@ -199,7 +199,9 @@ public class UserServiceImpl extends BaseServiceImpl<Long, User> implements User
 
         if (!user.getPassword().equals(password.getOldPassword())) {
             throw new ServiceException("旧密码输入不正确!");
-        } else {
+        }
+
+        if (user.getPassword().equals(password.getNewPassword())) {
             throw new ServiceException("新密码不能与旧密码相同!");
         }
     }

@@ -1,6 +1,5 @@
 package github.exia1771.deploy.common.controller;
 
-import github.exia1771.deploy.common.entity.dto.FileDTO;
 import github.exia1771.deploy.common.service.FileService;
 import github.exia1771.deploy.common.util.CommonResponse;
 import github.exia1771.deploy.common.util.ResponseBody;

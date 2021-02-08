@@ -2,7 +2,6 @@ package github.exia1771.deploy.common.util;
 
 
 import github.exia1771.deploy.common.entity.User;
-import io.jsonwebtoken.Claims;
 import lombok.Data;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;

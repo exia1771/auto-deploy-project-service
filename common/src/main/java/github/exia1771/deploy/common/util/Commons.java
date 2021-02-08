@@ -7,7 +7,7 @@ public class Commons {
     private static final Long WORK_ID = 1L;
     private static final Long DATA_ID = 1L;
 
-    public static Long getId(){
-        return IdUtil.getSnowflake(WORK_ID,DATA_ID).nextId();
+    public static Long getId() {
+        return IdUtil.getSnowflake(WORK_ID, DATA_ID).nextId();
     }
 }

@@ -24,6 +24,10 @@ public abstract class Dates {
         return LocalDateTime.ofInstant(date.toInstant(), ZONE_ID);
     }
 
+    public static LocalDateTime toLocalDateTime(Long timestamp) {
+        return toLocalDateTime(new Date(timestamp));
+    }
+
     public static Date plus(Date date, TemporalAmount amount) {
         LocalDateTime localDateTime = toLocalDateTime(date);
         return toDate(localDateTime.plus(amount));

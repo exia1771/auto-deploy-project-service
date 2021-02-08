@@ -6,20 +6,20 @@ import github.exia1771.deploy.common.util.ResponseBody;
 import github.exia1771.deploy.common.util.Tokens;
 import github.exia1771.deploy.common.util.Users;
 import io.jsonwebtoken.JwtException;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLDecoder;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @Slf4j
+@Data
 public class TokenInterceptor implements HandlerInterceptor {
 
     private static final String CONTENT_TYPE = "Content-Type";
@@ -30,7 +30,7 @@ public class TokenInterceptor implements HandlerInterceptor {
     private static final String ALLOW_HEADERS = "Access-Control-Allow-Headers";
     private static final String METHODS = "GET, HEAD, POST, PUT, DELETE, OPTIONS, PATCH";
     private static final String OPTIONS_METHOD = "OPTIONS";
-    private static final String DOMAIN = "http://localhost:8080";
+    private String DOMAIN;
 
 
     @Override
