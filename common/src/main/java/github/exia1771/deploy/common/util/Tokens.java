@@ -47,16 +47,12 @@ public abstract class Tokens {
     }
 
     public static Claims parse(String token) {
-        try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(KEY)
-                    .requireSubject(SUBJECT)
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (JwtException e) {
-            throw new ServiceException(Tokens.TOKEN_ILLEGAL_OR_EXPIRATION);
-        }
+        return Jwts.parserBuilder()
+                .setSigningKey(KEY)
+                .requireSubject(SUBJECT)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     public static void setCookie(HttpServletResponse response, String token) throws UnsupportedEncodingException {

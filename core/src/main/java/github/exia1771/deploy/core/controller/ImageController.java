@@ -24,4 +24,9 @@ public class ImageController {
     public ResponseEntity<ResponseBody> inspect(@PathVariable("id") String id) {
         return CommonResponse.success(service.inspect(id));
     }
+
+    @GetMapping("/find")
+    public ResponseEntity<ResponseBody> findByTag(@RequestParam("tag") String tag) {
+        return CommonResponse.success(service.findByTag(tag));
+    }
 }

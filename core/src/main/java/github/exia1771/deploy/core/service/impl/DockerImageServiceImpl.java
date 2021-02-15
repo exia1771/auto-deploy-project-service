@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DockerImageServiceImpl extends DockerContainerEngine implements ImageService {
@@ -36,5 +37,25 @@ public class DockerImageServiceImpl extends DockerContainerEngine implements Ima
     @Override
     public JSONObject inspect(String id) {
         return getRestTemplate().getForObject(getServerAddress() + "images" + "/" + id + "/json", JSONObject.class);
+    }
+
+
+    @Override
+    public List<Image> findByTag(String tag) {
+        String url = getURL();
+        List<Image> imageList = getRestTemplate().getForObject(url, JSONArray.class).toJavaList(Image.class);
+        return imageList.stream().filter(image -> {
+            List<String> repoTags = image.getRepoTags();
+            boolean result = false;
+
+            for (String repoTag : repoTags) {
+                if (repoTag.contains(tag)) {
+                    result = true;
+                    break;
+                }
+            }
+
+            return result;
+        }).collect(Collectors.toList());
     }
 }

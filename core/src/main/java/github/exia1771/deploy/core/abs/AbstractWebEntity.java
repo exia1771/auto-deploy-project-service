@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Data
 @JSONType(naming = PropertyNamingStrategy.PascalCase)
-public abstract class AbstractEntity {
+public abstract class AbstractWebEntity {
 
     @JSONField(name = "created")
     private Long createdTimestamp;

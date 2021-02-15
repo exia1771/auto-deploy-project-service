@@ -5,7 +5,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication(scanBasePackages = "github.exia1771.deploy")
-@MapperScan("github.exia1771.deploy.common.mapper")
+@MapperScan(value = {
+        "github.exia1771.deploy.*.mapper",
+})
 public class IndexApplication {
 
     public static void main(String[] args) {

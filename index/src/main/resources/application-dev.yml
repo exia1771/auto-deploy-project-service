@@ -1,14 +1,10 @@
 server:
-  port: 8082
   servlet:
     session:
       cookie:
         domain: http://localhost:8080
 
 spring:
-  application:
-    name: AUTO_DEPLOY_PROJECT_COMMON
-
   datasource:
     url: jdbc:mysql://localhost:3306/auto_deploy_project?useSSL=false&characterEncoding=utf-8&serverTimezone=UTC
     username: root

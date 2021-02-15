@@ -1,6 +1,6 @@
 package github.exia1771.deploy.core.entity;
 
-import github.exia1771.deploy.core.abs.AbstractEntity;
+import github.exia1771.deploy.core.abs.AbstractWebEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -9,7 +9,7 @@ import java.util.Map;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Image extends AbstractEntity {
+public class Image extends AbstractWebEntity {
 
     private String id;
     private List<String> repoTags;

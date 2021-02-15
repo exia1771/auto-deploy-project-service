@@ -75,7 +75,7 @@ public class TokenInterceptor implements HandlerInterceptor {
         cookieToken = URLDecoder.decode(cookieToken, StandardCharsets.UTF_8.displayName());
 
         if (!cookieToken.startsWith(Tokens.TOKEN_PREFIX)) {
-            response.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
             ResponseBody responseBody = new ResponseBody(null, Tokens.TOKEN_ILLEGAL);
             response.getWriter().print(JSON.toJSONString(responseBody));
             return false;
@@ -89,7 +89,7 @@ public class TokenInterceptor implements HandlerInterceptor {
                 String roleId = parse.get(Users.Params.ROLE_ID.getValue()).toString();
 
                 if (!Users.compareToken(token, userId)) {
-                    response.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
                     ResponseBody responseBody = new ResponseBody(null, Tokens.TOKEN_ILLEGAL);
                     response.getWriter().print(JSON.toJSONString(responseBody));
                     return false;
@@ -107,7 +107,7 @@ public class TokenInterceptor implements HandlerInterceptor {
                 return true;
 
             } catch (JwtException e) {
-                response.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 ResponseBody responseBody = new ResponseBody(null, Tokens.TOKEN_ILLEGAL_OR_EXPIRATION);
                 response.getWriter().print(JSON.toJSONString(responseBody));
                 return false;

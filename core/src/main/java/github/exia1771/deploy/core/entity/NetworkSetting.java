@@ -1,12 +1,12 @@
 package github.exia1771.deploy.core.entity;
 
-import github.exia1771.deploy.core.abs.AbstractEntity;
+import github.exia1771.deploy.core.abs.AbstractWebEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class NetworkSetting extends AbstractEntity {
+public class NetworkSetting extends AbstractWebEntity {
 
     private Network networks;
 
@@ -17,7 +17,7 @@ public class NetworkSetting extends AbstractEntity {
 
     @Data
     @EqualsAndHashCode(callSuper = false)
-    static class Bridge extends AbstractEntity {
+    static class Bridge extends AbstractWebEntity {
         private String gateway;
         private String iPAddress;
         private String macAddress;
