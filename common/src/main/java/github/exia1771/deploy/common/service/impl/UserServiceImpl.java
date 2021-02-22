@@ -4,12 +4,14 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import github.exia1771.deploy.common.entity.FileRequest;
 import github.exia1771.deploy.common.entity.Password;
+import github.exia1771.deploy.common.entity.Role;
 import github.exia1771.deploy.common.entity.User;
 import github.exia1771.deploy.common.entity.dto.FileDTO;
 import github.exia1771.deploy.common.entity.dto.UserDTO;
 import github.exia1771.deploy.common.exception.ServiceException;
 import github.exia1771.deploy.common.mapper.UserMapper;
 import github.exia1771.deploy.common.service.FileService;
+import github.exia1771.deploy.common.service.RoleService;
 import github.exia1771.deploy.common.service.UserService;
 import github.exia1771.deploy.common.util.Commons;
 import github.exia1771.deploy.common.util.Tokens;
@@ -28,7 +30,7 @@ import java.util.regex.Pattern;
 
 @Service
 @Transactional
-public class UserServiceImpl extends BaseServiceImpl<Long, User> implements UserService {
+public class UserServiceImpl extends BaseServiceImpl<String, User> implements UserService {
 
     private final UserMapper mapper;
     private final HttpServletResponse response;
@@ -40,6 +42,9 @@ public class UserServiceImpl extends BaseServiceImpl<Long, User> implements User
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private RoleService roleService;
 
     public UserServiceImpl(UserMapper mapper, HttpServletResponse response) {
         super(mapper);
@@ -66,7 +71,7 @@ public class UserServiceImpl extends BaseServiceImpl<Long, User> implements User
         user.setId(Commons.getId());
         user.setCreatorId(user.getId());
         user.setUpdaterId(user.getId());
-        user.setRoleId(DEFAULT_ROLE_ID);
+        user.setRoleId(DEFAULT_ROLE_ID.toString());
     }
 
 
@@ -88,7 +93,7 @@ public class UserServiceImpl extends BaseServiceImpl<Long, User> implements User
 
     @Override
     public void logout() {
-        Users.SimpleUser user = Users.getUser();
+        Users.SimpleUser user = Users.getSimpleUser();
         Users.discardUserToken(user.getUserId().toString());
     }
 
@@ -106,13 +111,21 @@ public class UserServiceImpl extends BaseServiceImpl<Long, User> implements User
         String token = Users.getUserToken(savedUser);
         Tokens.setCookie(response, token);
 
+        Role role = roleService.findById(savedUser.getRoleId());
+        userDTO.setRole(role.toDTO());
+
         return userDTO;
     }
 
     @Override
     public UserDTO login() {
-        Users.SimpleUser user = Users.getUser();
-        return findById(user.getUserId()).toDTO();
+        Users.SimpleUser user = Users.getSimpleUser();
+
+        UserDTO userDTO = findById(user.getUserId()).toDTO();
+        Role role = roleService.findById(user.getRoleId());
+        userDTO.setRole(role.toDTO());
+
+        return userDTO;
     }
 
     private void validateUpdate(User user) {
@@ -154,7 +167,7 @@ public class UserServiceImpl extends BaseServiceImpl<Long, User> implements User
     }
 
     private User getUser() {
-        Users.SimpleUser simpleUser = Users.getUser();
+        Users.SimpleUser simpleUser = Users.getSimpleUser();
         return findById(simpleUser.getUserId());
     }
 
@@ -162,7 +175,7 @@ public class UserServiceImpl extends BaseServiceImpl<Long, User> implements User
     @Override
     public FileDTO uploadAvatar(MultipartFile file) {
         String scheme = "http://";
-        Users.SimpleUser user = Users.getUser();
+        Users.SimpleUser user = Users.getSimpleUser();
         long maxSize = 1024 * 1024 * 4;
         String directory = FileDTO.FILE_SEPARATOR + "avatar" + FileDTO.FILE_SEPARATOR;
         String separator = "-";

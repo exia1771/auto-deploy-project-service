@@ -17,7 +17,7 @@ public class Users {
 
     private static RedisTemplate<String, Object> template;
     private static final String TOKEN = "token";
-    private static final ThreadLocal<SimpleUser> LOCAL_USER = new ThreadLocal<>();
+    private static final ThreadLocal<SimpleUser> LOCAL_SIMPLE_USER = new ThreadLocal<>();
 
 
     @Autowired
@@ -26,14 +26,14 @@ public class Users {
     }
 
     public static void setUser(SimpleUser user) {
-        if (LOCAL_USER.get() != null) {
-            LOCAL_USER.remove();
+        if (LOCAL_SIMPLE_USER.get() != null) {
+            LOCAL_SIMPLE_USER.remove();
         }
-        LOCAL_USER.set(user);
+        LOCAL_SIMPLE_USER.set(user);
     }
 
-    public static SimpleUser getUser() {
-        SimpleUser simpleUser = LOCAL_USER.get();
+    public static SimpleUser getSimpleUser() {
+        SimpleUser simpleUser = LOCAL_SIMPLE_USER.get();
         Objects.requireNonNull(simpleUser);
         return simpleUser;
     }
@@ -59,14 +59,18 @@ public class Users {
 
     @Data
     public final static class SimpleUser {
-        private Long userId;
-        private Long roleId;
+        private String userId;
+        private String roleId;
 
         public SimpleUser(Long userId, Long roleId) {
-            this.userId = userId;
-            this.roleId = roleId;
+            this.userId = userId.toString();
+            this.roleId = roleId.toString();
         }
 
+        public SimpleUser(String userId, String roleId) {
+            this.userId = userId.toString();
+            this.roleId = roleId.toString();
+        }
     }
 
 

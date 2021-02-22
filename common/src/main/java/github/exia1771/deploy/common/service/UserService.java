@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.UnsupportedEncodingException;
 
-public interface UserService extends BaseService<Long, User> {
+public interface UserService extends BaseService<String, User> {
 
     Boolean isExistedName(String name);
 

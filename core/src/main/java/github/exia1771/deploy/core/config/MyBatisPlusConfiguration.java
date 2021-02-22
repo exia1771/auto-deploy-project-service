@@ -1,13 +1,9 @@
 package github.exia1771.deploy.core.config;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.MySqlDialect;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
-import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

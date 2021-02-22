@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
 @RestController
 @RequestMapping("/template")
 public class ImageTemplateController {
@@ -32,5 +30,10 @@ public class ImageTemplateController {
     @PostMapping("/pageByName")
     public ResponseEntity<ResponseBody> pageByName(@RequestBody ImageTemplate template) {
         return CommonResponse.success(service.pageByName(template));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ResponseBody> deleteById(@PathVariable("id") String id) {
+        return CommonResponse.success(service.deleteById(id));
     }
 }

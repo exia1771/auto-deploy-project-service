@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class RoleDTO extends AbstractDTO<Long> {
+public class RoleDTO extends AbstractDTO<String> {
 
     private String name;
     private Boolean createPri;

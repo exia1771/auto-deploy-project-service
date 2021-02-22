@@ -7,12 +7,13 @@ import github.exia1771.deploy.core.entity.Image;
 import github.exia1771.deploy.core.props.DockerProperties;
 import github.exia1771.deploy.core.service.ImageService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@Service("docker")
 public class DockerImageServiceImpl extends DockerContainerEngine implements ImageService {
 
     private static final String IMAGE_PREFIX = "images/json?";
@@ -36,7 +37,13 @@ public class DockerImageServiceImpl extends DockerContainerEngine implements Ima
 
     @Override
     public JSONObject inspect(String id) {
-        return getRestTemplate().getForObject(getServerAddress() + "images" + "/" + id + "/json", JSONObject.class);
+        JSONObject result;
+        try {
+            result = getRestTemplate().getForObject(getServerAddress() + "images" + "/" + id + "/json", JSONObject.class);
+        } catch (HttpClientErrorException.NotFound e) {
+            result = null;
+        }
+        return result;
     }
 
 

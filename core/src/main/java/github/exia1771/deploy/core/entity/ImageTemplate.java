@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class ImageTemplate extends AbstractEntity<Long> implements Pageable {
+public class ImageTemplate extends AbstractEntity<String> implements Pageable {
 
     @NotNull
     @NotBlank
@@ -32,7 +32,7 @@ public class ImageTemplate extends AbstractEntity<Long> implements Pageable {
     private transient Long size;
 
     @Override
-    public AbstractDTO<Long> toDTO() {
+    public AbstractDTO<String> toDTO() {
         return null;
     }
 }

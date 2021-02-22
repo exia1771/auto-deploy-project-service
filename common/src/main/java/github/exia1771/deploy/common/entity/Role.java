@@ -7,7 +7,7 @@ import org.springframework.beans.BeanUtils;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Role extends AbstractEntity<Long> {
+public class Role extends AbstractEntity<String> {
 
     private String name;
     private Boolean createPri;

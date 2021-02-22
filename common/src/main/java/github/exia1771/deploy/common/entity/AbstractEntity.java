@@ -10,9 +10,9 @@ import java.util.Date;
 public abstract class AbstractEntity<T extends Serializable> {
 
     private T id;
-    private Long creatorId;
+    private String creatorId;
     private Date creationTime;
-    private Long updaterId;
+    private String updaterId;
     private Date updateTime;
 
     public AbstractEntity() {

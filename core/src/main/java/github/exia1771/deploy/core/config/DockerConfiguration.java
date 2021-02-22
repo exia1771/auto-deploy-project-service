@@ -7,7 +7,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j

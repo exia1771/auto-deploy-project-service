@@ -11,14 +11,14 @@ import javax.validation.constraints.Size;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class User extends AbstractEntity<Long> {
+public class User extends AbstractEntity<String> {
 
     @NotNull
     @NotBlank
     @Size(min = 6, max = 255)
     private String username;
 
-    private Long roleId;
+    private String roleId;
 
     @NotNull
     @NotBlank

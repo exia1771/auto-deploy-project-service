@@ -14,10 +14,11 @@ public interface BaseService<K extends Serializable, T extends AbstractEntity<K>
 
     T findById(K id);
 
+    Boolean deleteById(K id);
+
     List<T> findAll();
 
     IPage<T> pageAll(Page<T> page);
 
     Boolean isExisted(Map<String, Object> params);
-
 }

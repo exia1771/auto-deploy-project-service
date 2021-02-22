@@ -97,8 +97,8 @@ public class TokenInterceptor implements HandlerInterceptor {
 
                 if (Tokens.isWillExpire(token)) {
                     User user = new User();
-                    user.setId(Long.valueOf(userId));
-                    user.setRoleId(Long.valueOf(roleId));
+                    user.setId(userId);
+                    user.setRoleId(roleId);
                     String refreshToken = Users.getUserToken(user);
                     Tokens.setCookie(response, refreshToken);
                 }
