@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public class Image extends AbstractWebEntity {
 
     private String id;

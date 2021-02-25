@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import org.springframework.beans.BeanUtils;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public class Role extends AbstractEntity<String> {
 
     private String name;

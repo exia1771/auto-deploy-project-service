@@ -35,7 +35,7 @@ public class UserServiceImpl extends BaseServiceImpl<String, User> implements Us
     private final UserMapper mapper;
     private final HttpServletResponse response;
     private static final String USER_NAME_EXISTED = "用户名已存在!";
-    private static final String USER_NAME_NOT_EXISTED = "请输入正确的用户名!";
+    private static final String USER_NAME_NOT_EXISTED = "用户名不存在!";
     private static final String USER_NAME = "username";
     private static final String PASSWORD_NOT_CORRECT = "密码错误!";
     private static final Long DEFAULT_ROLE_ID = 1L;
@@ -183,7 +183,7 @@ public class UserServiceImpl extends BaseServiceImpl<String, User> implements Us
         FileRequest fileRequest = new FileRequest() {{
             setMaxSize(maxSize);
             setDirectory(directory);
-            setFileName(user.getUserId().toString() + separator + file.getOriginalFilename());
+            setFileName(user.getUserId() + separator + file.getOriginalFilename());
         }};
 
         FileDTO upload = fileService.upload(file, fileRequest);

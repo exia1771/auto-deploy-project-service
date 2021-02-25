@@ -36,4 +36,19 @@ public class ImageTemplateController {
     public ResponseEntity<ResponseBody> deleteById(@PathVariable("id") String id) {
         return CommonResponse.success(service.deleteById(id));
     }
+
+    @GetMapping("/name")
+    public ResponseEntity<ResponseBody> findDistinctTemplateName() {
+        return CommonResponse.success(service.findDistinctTemplateName());
+    }
+
+    @GetMapping("/name/{keyword}")
+    public ResponseEntity<ResponseBody> findTemplateNameByKeyword(@PathVariable("keyword") String keyword) {
+        return CommonResponse.success(service.findTemplateNameByKeyword(keyword));
+    }
+
+    @GetMapping("/tag/{templateName}")
+    public ResponseEntity<ResponseBody> findTagsByTemplateName(@PathVariable("templateName") String templateName) {
+        return CommonResponse.success(service.findTagsByTemplateName(templateName));
+    }
 }

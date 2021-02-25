@@ -6,12 +6,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import github.exia1771.deploy.common.entity.AbstractEntity;
 import github.exia1771.deploy.common.entity.Role;
-import github.exia1771.deploy.common.entity.User;
 import github.exia1771.deploy.common.service.BaseService;
 import github.exia1771.deploy.common.util.Dates;
 import github.exia1771.deploy.common.util.Users;
-import lombok.Getter;
 
+import javax.validation.ValidationException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -24,31 +23,76 @@ public abstract class BaseServiceImpl<K extends Serializable, T extends Abstract
         this.mapper = mapper;
     }
 
+    protected void beforeSave(T t) {
+    }
+
     protected void beforeInsert(T t) {
     }
 
     protected void beforeUpdate(T t) {
     }
 
+    protected void validateCreatePri() {
+        if (getRole() != null && (getRole().getCreatePri() == null || !getRole().getCreatePri())) {
+            throw new ValidationException("该账号缺少当前模块的创建权限");
+        }
+    }
+
+    protected void validateUpdatePri() {
+        if (getRole() != null && (getRole().getUpdatePri() == null || !getRole().getUpdatePri())) {
+            throw new ValidationException("该账号缺少当前模块的修改权限");
+        }
+    }
+
+    protected void validateDeletePri() {
+        if (getRole() != null && (getRole().getDeletePri() == null || !getRole().getDeletePri())) {
+            throw new ValidationException("该账号缺少当前模块的删除权限");
+        }
+    }
+
+    public Role getRole() {
+        return null;
+    }
+
+    public Users.SimpleUser getCurrentUser(){
+        return null;
+    }
+
     @Override
     public T save(T t) {
+        beforeSave(t);
         if (t.getId() == null) {
+            validateCreatePri();
             beforeInsert(t);
+
+            if(getCurrentUser() != null) {
+                t.setCreatorId(getCurrentUser().getUserId());
+                t.setUpdaterId(getCurrentUser().getUserId());
+            }
+
             t.setCreationTime(Dates.now());
             t.setUpdateTime(Dates.now());
             mapper.insert(t);
         } else {
+            validateUpdatePri();
             beforeUpdate(t);
+
+            if(getCurrentUser() != null){
+                t.setUpdaterId(getCurrentUser().getUserId());
+            }
+
             t.setUpdateTime(Dates.now());
             mapper.updateById(t);
         }
         return t;
     }
 
-    protected void beforeDelete(K id){}
+    protected void beforeDelete(K id) {
+    }
 
     @Override
     public Boolean deleteById(K id) {
+        validateDeletePri();
         beforeDelete(id);
         int rows = mapper.deleteById(id);
         return rows != 0;

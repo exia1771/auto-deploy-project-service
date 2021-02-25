@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public class FileDTO extends AbstractDTO<String> {
 
     public static final String FILE_EXT_DELIMITER = ".";

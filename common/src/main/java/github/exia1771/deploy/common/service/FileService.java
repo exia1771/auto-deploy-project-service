@@ -11,4 +11,10 @@ public interface FileService {
     default FileDTO upload(MultipartFile file) {
         return upload(file, null);
     }
+
+    FileDTO download(String url, FileRequest request);
+
+    default FileDTO download(String url) {
+        return download(url, null);
+    }
 }

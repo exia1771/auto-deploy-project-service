@@ -2,7 +2,6 @@ package github.exia1771.deploy.core.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import github.exia1771.deploy.common.entity.Role;
 import github.exia1771.deploy.common.exception.ServiceException;
@@ -21,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ValidationException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -37,17 +38,13 @@ public class ImageTemplateServiceImpl extends BaseServiceImpl<String, ImageTempl
     private static final String TEMPLATE_NAME_COLUMN = "template_name";
     private static final String TEMPLATE_TAG_COLUMN = "template_tag";
 
-    public ImageTemplateServiceImpl(BaseMapper<ImageTemplate> mapper, ImageTemplateMapper imageTemplateMapper) {
-        super(mapper);
+    public ImageTemplateServiceImpl(ImageTemplateMapper imageTemplateMapper) {
+        super(imageTemplateMapper);
         this.mapper = imageTemplateMapper;
     }
 
 
     private void validImageTemplate(ImageTemplate template) {
-        Role role = getRole();
-        if(role.getCreatePri() == null || !role.getCreatePri()){
-            throw new ValidationException("该账号缺少当前模块的创建权限");
-        }
 
         if (template.getTemplateName() == null
                 || template.getTemplateTag() == null
@@ -55,55 +52,45 @@ public class ImageTemplateServiceImpl extends BaseServiceImpl<String, ImageTempl
             throw new ValidationException("模板名称，模板标签，镜像ID不能为NULL");
         }
 
-        if (!Strings.lengthBetween(template.getTemplateName(), 1, 255) ||
-                !Strings.lengthBetween(template.getTemplateTag(), 1, 255) ||
-                !Strings.lengthBetween(template.getDockerImageId(), 1, 255)) {
+        if (!Strings.isLengthBetween(template.getTemplateName(), 1, 255) ||
+                !Strings.isLengthBetween(template.getTemplateTag(), 1, 255) ||
+                !Strings.isLengthBetween(template.getDockerImageId(), 1, 255)) {
             throw new ValidationException("字符长度必须在 1 ~ 255 之间");
         }
 
         JSONObject inspect = imageService.inspect(template.getDockerImageId());
-        if(inspect == null){
+        if (inspect == null) {
             throw new ValidationException("不存在的镜像ID");
         }
 
-        Map<String, Object> params =  new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put(TEMPLATE_NAME_COLUMN, template.getTemplateName());
         params.put(TEMPLATE_TAG_COLUMN, template.getTemplateTag());
 
-        if(isExisted(params)){
+        if (isExisted(params)) {
             throw new ValidationException("已经存在相同的模板名称与标签");
         }
 
     }
 
-    private Role getRole() {
+    public Role getRole() {
         String roleId = Users.getSimpleUser().getRoleId();
         return roleService.findById(roleId);
     }
 
     @Override
-    protected void beforeInsert(ImageTemplate template) {
+    protected void beforeSave(ImageTemplate template) {
         validImageTemplate(template);
+    }
 
+    @Override
+    protected void beforeInsert(ImageTemplate template) {
         Users.SimpleUser user = Users.getSimpleUser();
         template.setId(Commons.getId());
         template.setCreatorId(user.getUserId());
         template.setUpdaterId(user.getUserId());
     }
 
-    @Override
-    protected void beforeUpdate(ImageTemplate template) {
-        if(getRole().getUpdatePri() != null || !getRole().getUpdatePri()){
-            throw new ValidationException("该账号缺少当前模块的修改权限");
-        }
-    }
-
-    @Override
-    protected void beforeDelete(String id) {
-        if(getRole().getDeletePri() != null || !getRole().getDeletePri()){
-            throw new ValidationException("该账号缺少当前模块的删除权限");
-        }
-    }
 
     @Override
     public Page<ImageTemplate> pageByName(ImageTemplate template) {
@@ -125,5 +112,28 @@ public class ImageTemplateServiceImpl extends BaseServiceImpl<String, ImageTempl
         queryWrapper.like(TEMPLATE_NAME_COLUMN, template.getTemplateName());
 
         return mapper.selectPage(page, queryWrapper);
+    }
+
+    @Override
+    public List<String> findTemplateNameByKeyword(String keyword) {
+        QueryWrapper<ImageTemplate> queryWrapper = new QueryWrapper<>();
+        queryWrapper.groupBy(TEMPLATE_NAME_COLUMN);
+        queryWrapper.like(TEMPLATE_NAME_COLUMN, keyword);
+        return mapper.selectList(queryWrapper).stream().map(ImageTemplate::getTemplateName).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> findDistinctTemplateName() {
+        QueryWrapper<ImageTemplate> queryWrapper = new QueryWrapper<>();
+        queryWrapper.groupBy(TEMPLATE_NAME_COLUMN);
+        List<ImageTemplate> imageTemplates = mapper.selectList(queryWrapper);
+        return imageTemplates.stream().map(ImageTemplate::getTemplateName).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> findTagsByTemplateName(String templateName) {
+        QueryWrapper<ImageTemplate> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(TEMPLATE_NAME_COLUMN, templateName);
+        return mapper.selectList(queryWrapper).stream().map(ImageTemplate::getTemplateTag).collect(Collectors.toList());
     }
 }

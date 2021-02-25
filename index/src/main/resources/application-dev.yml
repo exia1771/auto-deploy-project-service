@@ -11,7 +11,7 @@ spring:
     password:
 
   redis:
-    host: 7.224.218.57
+    host: 192.168.8.146
     port: 6379
 
 file:
@@ -26,4 +26,4 @@ mybatis-plus:
 
 deploy:
   docker:
-    server-address: http://7.224.218.57:2375/
+    server-address: http://192.168.8.146:2375/

@@ -35,7 +35,7 @@ public abstract class Tokens {
         Date now = Dates.now();
         Date expiration = Dates.plus(now, EXPIRATION_MINUTES);
         return Jwts.builder()
-                .setId(Commons.getId().toString())
+                .setId(Commons.getId())
                 .setSubject(SUBJECT)
                 .setIssuedAt(now)
                 .signWith(KEY)

@@ -1,6 +1,5 @@
 package github.exia1771.deploy.common.service.impl;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import github.exia1771.deploy.common.entity.Role;
 import github.exia1771.deploy.common.mapper.RoleMapper;
 import github.exia1771.deploy.common.service.RoleService;
@@ -11,8 +10,8 @@ public class RoleServiceImpl extends BaseServiceImpl<String, Role> implements Ro
 
     private final RoleMapper roleMapper;
 
-    public RoleServiceImpl(RoleMapper roleMapper, BaseMapper<Role> mapper) {
-        super(mapper);
+    public RoleServiceImpl(RoleMapper roleMapper) {
+        super(roleMapper);
         this.roleMapper = roleMapper;
     }
 

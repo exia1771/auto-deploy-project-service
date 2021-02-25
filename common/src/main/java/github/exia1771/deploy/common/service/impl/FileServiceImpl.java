@@ -4,8 +4,8 @@ import cn.hutool.core.io.FileUtil;
 import github.exia1771.deploy.common.entity.FileRequest;
 import github.exia1771.deploy.common.entity.dto.FileDTO;
 import github.exia1771.deploy.common.exception.ServiceException;
+import github.exia1771.deploy.common.props.FileProperties;
 import github.exia1771.deploy.common.service.FileService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,16 +16,14 @@ import java.io.IOException;
 @Service
 public class FileServiceImpl implements FileService {
 
-    @Value("${file.upload.root}")
-    private String rootPath;
-
-    @Value("${file.upload.mapping-url}")
-    private String mappingUrl;
     private static final String contextPath = System.getProperty("user.dir");
+
+    private final FileProperties properties;
     private final HttpServletRequest request;
 
-    public FileServiceImpl(HttpServletRequest request) {
+    public FileServiceImpl(HttpServletRequest request, FileProperties properties) {
         this.request = request;
+        this.properties = properties;
     }
 
     private void validateFile(MultipartFile file, FileRequest request) {
@@ -50,8 +48,9 @@ public class FileServiceImpl implements FileService {
     public FileDTO upload(MultipartFile file, FileRequest fileRequest) {
         validateFile(file, fileRequest);
 
+        String root = properties.getUpload().getRoot();
 
-        String workPath = rootPath == null ? contextPath : rootPath;
+        String workPath = root == null ? contextPath : root;
         String fileName = fileRequest.getFileName() == null ? file.getName() : fileRequest.getFileName();
         File filePath = new File(workPath + fileRequest.getDirectory(), fileName);
 
@@ -65,10 +64,17 @@ public class FileServiceImpl implements FileService {
             throw new ServiceException(e.getMessage());
         }
 
+        String mappingUrl = properties.getUpload().getMappingUrl();
         String serverAddress = request.getServerName() + ":" + request.getServerPort() + mappingUrl;
         return new FileDTO() {{
             setFileName(fileName);
             setUrl(serverAddress + fileRequest.getDirectory() + fileName);
         }};
+    }
+
+
+    @Override
+    public FileDTO download(String url, FileRequest request) {
+        return null;
     }
 }
