@@ -54,7 +54,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 
         if (cookies == null) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            ResponseBody responseBody = new ResponseBody(null, Tokens.COOKIE_NOT_FOUND);
+            ResponseBody responseBody = new ResponseBody(null, Tokens.TOKEN_NOT_FOUND);
             response.getWriter().print(JSON.toJSONString(responseBody));
             return false;
         }

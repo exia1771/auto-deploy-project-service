@@ -15,4 +15,6 @@ public interface ImageTemplateService extends BaseService<String, ImageTemplate>
     List<String> findTemplateNameByKeyword(String keyword);
 
     List<String> findTagsByTemplateName(String templateName);
+
+    ImageTemplate findIdByTemplateNameAndTag(ImageTemplate template);
 }

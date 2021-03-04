@@ -2,11 +2,9 @@ package github.exia1771.deploy.common.util;
 
 import org.apache.http.HttpHost;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public abstract class Requests {
 

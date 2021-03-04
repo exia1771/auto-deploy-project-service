@@ -24,7 +24,6 @@ public abstract class Tokens {
     public static final String TOKEN_ILLEGAL = "授权违法，需要重新登录!";
     public static final String TOKEN_NOT_FOUND = "请重新登录!";
     public static final String TOKEN_ILLEGAL_OR_EXPIRATION = "授权违法或过期，需要重新登录!";
-    public static final String COOKIE_NOT_FOUND = "Needed Cookie Not Found!";
 
     private static final Key KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private static final String SUBJECT = "EXIA1771";

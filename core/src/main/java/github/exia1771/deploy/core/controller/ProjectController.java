@@ -6,10 +6,7 @@ import github.exia1771.deploy.core.entity.Project;
 import github.exia1771.deploy.core.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/project")
@@ -21,6 +18,11 @@ public class ProjectController {
     @PostMapping("/save")
     public ResponseEntity<ResponseBody> save(@RequestBody Project project) {
         return CommonResponse.success(service.save(project));
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<ResponseBody> findList() {
+        return CommonResponse.success(service.findByCurrentUser());
     }
 
 }

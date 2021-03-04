@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="github.exia1771.deploy.core.mapper.ProjectMapper">
+
+    <select id="findListById" parameterType="java.util.List" resultType="github.exia1771.deploy.core.entity.Project">
+
+        select * from project
+        where id in
+
+        <foreach open="(" close=")" collection="list" item="item" index="index" separator=",">
+            #{item}
+        </foreach>
+
+    </select>
+
+</mapper>

@@ -17,7 +17,7 @@ public class Project extends AbstractEntity<String> {
     private String identification;
     private String gitUrl;
     private String fileLocation;
-    private Boolean state;
+    private int state;
 
     @Override
     public ProjectDTO toDTO() {

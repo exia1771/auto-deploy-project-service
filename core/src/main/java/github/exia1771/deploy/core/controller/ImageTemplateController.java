@@ -51,4 +51,9 @@ public class ImageTemplateController {
     public ResponseEntity<ResponseBody> findTagsByTemplateName(@PathVariable("templateName") String templateName) {
         return CommonResponse.success(service.findTagsByTemplateName(templateName));
     }
+
+    @GetMapping("/id")
+    public ResponseEntity<ResponseBody> findTemplateIdByTemplateNameAndTag(ImageTemplate template) {
+        return CommonResponse.success(service.findIdByTemplateNameAndTag(template));
+    }
 }

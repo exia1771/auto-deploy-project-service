@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -43,15 +42,18 @@ public class ProjectUserServiceImpl extends BaseServiceImpl<String, ProjectUser>
     }
 
     @Override
-    public ProjectUser addProjectMember(ProjectUser projectUser) {
-        return save(projectUser);
+    public int addProjectMember(ProjectUser projectUser) {
+        ProjectUser save = save(projectUser);
+        return save == null ? 0 : 1;
     }
 
     @Override
-    public List<ProjectUser> batchAddProjectMember(List<ProjectUser> projectUsers) {
-        List<ProjectUser> list = new ArrayList<>();
-        projectUsers.stream().unordered().forEach(projectUser -> list.add(addProjectMember(projectUser)));
-        return list;
+    public int batchAddProjectMember(List<ProjectUser> projectUsers) {
+        projectUsers.forEach(projectUser -> {
+            projectUser.setCreatorId(getCurrentUser().getUserId());
+            projectUser.setUserId(getCurrentUser().getUserId());
+        });
+        return mapper.batchAddProjectMember(projectUsers);
     }
 
     @Override
@@ -66,12 +68,13 @@ public class ProjectUserServiceImpl extends BaseServiceImpl<String, ProjectUser>
 
     @Override
     public int batchRemoveProjectMember(List<ProjectUser> projectUsers) {
-        int count = 0;
+        return mapper.batchRemoveProjectMember(projectUsers);
+    }
 
-        for (ProjectUser projectUser : projectUsers) {
-            count += removeProjectMember(projectUser);
-        }
-
-        return count;
+    @Override
+    public List<ProjectUser> findByUserId(String userId) {
+        QueryWrapper<ProjectUser> wrapper = new QueryWrapper<>();
+        wrapper.eq(USER_ID_COLUMN, userId);
+        return mapper.selectList(wrapper);
     }
 }

@@ -136,4 +136,12 @@ public class ImageTemplateServiceImpl extends BaseServiceImpl<String, ImageTempl
         queryWrapper.eq(TEMPLATE_NAME_COLUMN, templateName);
         return mapper.selectList(queryWrapper).stream().map(ImageTemplate::getTemplateTag).collect(Collectors.toList());
     }
+
+    @Override
+    public ImageTemplate findIdByTemplateNameAndTag(ImageTemplate template) {
+        QueryWrapper<ImageTemplate> wrapper = new QueryWrapper<>();
+        wrapper.eq(TEMPLATE_NAME_COLUMN, template.getTemplateName());
+        wrapper.eq(TEMPLATE_TAG_COLUMN, template.getTemplateTag());
+        return mapper.selectOne(wrapper);
+    }
 }

@@ -8,6 +8,7 @@ import github.exia1771.deploy.common.service.impl.BaseServiceImpl;
 import github.exia1771.deploy.common.util.Commons;
 import github.exia1771.deploy.common.util.Users;
 import github.exia1771.deploy.core.entity.Project;
+import github.exia1771.deploy.core.entity.ProjectUser;
 import github.exia1771.deploy.core.mapper.ProjectMapper;
 import github.exia1771.deploy.core.service.ProjectService;
 import github.exia1771.deploy.core.service.ProjectUserService;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ValidationException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -64,5 +67,14 @@ public class ProjectServiceImpl extends BaseServiceImpl<String, Project> impleme
         projectUserService.addProjectMember(project.getId(), master.getId());
     }
 
+    @Override
+    public List<Project> findByCurrentUser() {
+        return findByUserId(getCurrentUser().getUserId());
+    }
 
+    @Override
+    public List<Project> findByUserId(String userId) {
+        List<String> projectIdList = projectUserService.findByUserId(userId).stream().map(ProjectUser::getProjectId).collect(Collectors.toList());
+        return mapper.findListById(projectIdList);
+    }
 }
