@@ -22,7 +22,7 @@ public class ProjectController {
 
     @GetMapping("/list")
     public ResponseEntity<ResponseBody> findList() {
-        return CommonResponse.success(service.findByCurrentUser());
+        return CommonResponse.success(service.findProjectsByCurrentUser());
     }
 
 }

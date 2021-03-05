@@ -1,10 +1,11 @@
 package github.exia1771.deploy.core.entity;
 
 import github.exia1771.deploy.common.entity.AbstractEntity;
-import github.exia1771.deploy.common.entity.dto.AbstractDTO;
 import github.exia1771.deploy.core.Pageable;
+import github.exia1771.deploy.core.dto.ImageTemplateDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -32,7 +33,9 @@ public class ImageTemplate extends AbstractEntity<String> implements Pageable {
     private transient Long size;
 
     @Override
-    public AbstractDTO<String> toDTO() {
-        return null;
+    public ImageTemplateDTO toDTO() {
+        ImageTemplateDTO imageTemplateDTO = new ImageTemplateDTO();
+        BeanUtils.copyProperties(this, imageTemplateDTO);
+        return imageTemplateDTO;
     }
 }

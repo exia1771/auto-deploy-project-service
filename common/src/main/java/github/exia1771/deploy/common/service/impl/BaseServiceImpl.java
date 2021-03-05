@@ -9,12 +9,14 @@ import github.exia1771.deploy.common.entity.Role;
 import github.exia1771.deploy.common.service.BaseService;
 import github.exia1771.deploy.common.util.Dates;
 import github.exia1771.deploy.common.util.Users;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ValidationException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+@Transactional
 public abstract class BaseServiceImpl<K extends Serializable, T extends AbstractEntity<K>> implements BaseService<K, T> {
 
     private final BaseMapper<T> mapper;

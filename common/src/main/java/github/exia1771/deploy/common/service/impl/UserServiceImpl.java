@@ -18,7 +18,6 @@ import github.exia1771.deploy.common.util.Tokens;
 import github.exia1771.deploy.common.util.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -29,7 +28,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 @Service
-@Transactional
 public class UserServiceImpl extends BaseServiceImpl<String, User> implements UserService {
 
     private final UserMapper mapper;

@@ -10,12 +10,10 @@ import github.exia1771.deploy.core.mapper.ProjectUserMapper;
 import github.exia1771.deploy.core.service.ProjectUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional
 public class ProjectUserServiceImpl extends BaseServiceImpl<String, ProjectUser> implements ProjectUserService {
 
     @Autowired

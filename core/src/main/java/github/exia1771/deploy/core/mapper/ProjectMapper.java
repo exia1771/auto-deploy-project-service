@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface ProjectMapper extends BaseMapper<Project> {
 
-    List<Project> findListById(@Param("list") List<String> projectIdList);
+    List<Project> findListById(@Param("list") List<String> projectIdList, @Param("current") long current, @Param("size") long size);
 
 }

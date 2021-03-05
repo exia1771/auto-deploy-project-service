@@ -10,13 +10,13 @@ import github.exia1771.deploy.common.service.impl.BaseServiceImpl;
 import github.exia1771.deploy.common.util.Commons;
 import github.exia1771.deploy.common.util.Strings;
 import github.exia1771.deploy.common.util.Users;
+import github.exia1771.deploy.core.dto.ImageTemplateDTO;
 import github.exia1771.deploy.core.entity.ImageTemplate;
 import github.exia1771.deploy.core.mapper.ImageTemplateMapper;
 import github.exia1771.deploy.core.service.ImageService;
 import github.exia1771.deploy.core.service.ImageTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ValidationException;
 import java.util.HashMap;
@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 public class ImageTemplateServiceImpl extends BaseServiceImpl<String, ImageTemplate> implements ImageTemplateService {
 
     @Autowired
@@ -37,6 +36,7 @@ public class ImageTemplateServiceImpl extends BaseServiceImpl<String, ImageTempl
     private final ImageTemplateMapper mapper;
     private static final String TEMPLATE_NAME_COLUMN = "template_name";
     private static final String TEMPLATE_TAG_COLUMN = "template_tag";
+    private static final String TEMPLATE_ID_COLUMN = "id";
 
     public ImageTemplateServiceImpl(ImageTemplateMapper imageTemplateMapper) {
         super(imageTemplateMapper);
@@ -131,10 +131,11 @@ public class ImageTemplateServiceImpl extends BaseServiceImpl<String, ImageTempl
     }
 
     @Override
-    public List<String> findTagsByTemplateName(String templateName) {
+    public List<ImageTemplateDTO> findTagsByTemplateName(String templateName) {
         QueryWrapper<ImageTemplate> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(TEMPLATE_NAME_COLUMN, templateName);
-        return mapper.selectList(queryWrapper).stream().map(ImageTemplate::getTemplateTag).collect(Collectors.toList());
+        queryWrapper.select(TEMPLATE_ID_COLUMN, TEMPLATE_NAME_COLUMN, TEMPLATE_TAG_COLUMN);
+        return mapper.selectList(queryWrapper).stream().map(ImageTemplate::toDTO).collect(Collectors.toList());
     }
 
     @Override
