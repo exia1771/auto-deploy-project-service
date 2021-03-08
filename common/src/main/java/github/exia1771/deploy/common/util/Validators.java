@@ -34,12 +34,15 @@ public abstract class Validators {
         }
     }
 
-    public static void requireLength(String fieldName, String field, int min, int max) {
-        requireLength(fieldName, field, min, max, null);
+    public static void requireLength(String fieldName, String field, int min, int max, boolean notBlank) {
+        requireLength(fieldName, field, min, max, null, notBlank);
     }
 
-    public static void requireLength(String fieldName, String field, int min, int max, String tip) {
-        requireNotBlank(fieldName, field);
+    public static void requireLength(String fieldName, String field, int min, int max, String tip, boolean notBlank) {
+        if (notBlank) {
+            requireNotBlank(fieldName, field);
+        }
+
         if (!Strings.isLengthBetween(field, min, max)) {
             String defaultMessage = fieldName + NOT_LENGTH_BETWEEN_MESSAGE + ": [" + min + "," + max + "]";
             String message = tip == null ? defaultMessage : tip;
@@ -52,7 +55,7 @@ public abstract class Validators {
     }
 
     public static void requireMatchRegex(String fieldName, String field, String regex, String tip) {
-        requireNotBlank(fieldName, field);
+        requireNotNull(fieldName, field);
         if (!field.matches(regex)) {
             String message = tip == null ? fieldName + NOT_MATCH_REGEX_MESSAGE : tip;
             throw new ValidationException(message);

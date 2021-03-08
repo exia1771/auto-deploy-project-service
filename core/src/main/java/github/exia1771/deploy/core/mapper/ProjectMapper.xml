@@ -12,6 +12,8 @@
             #{item}
         </foreach>
 
+        limit #{size} * (#{current} - 1) , #{size}
+
     </select>
 
 </mapper>

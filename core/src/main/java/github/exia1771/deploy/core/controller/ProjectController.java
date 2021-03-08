@@ -21,8 +21,8 @@ public class ProjectController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<ResponseBody> findList() {
-        return CommonResponse.success(service.findProjectsByCurrentUser());
+    public ResponseEntity<ResponseBody> findList(@RequestBody Project project) {
+        return CommonResponse.success(service.findProjectsByCurrentUser(project));
     }
 
 }

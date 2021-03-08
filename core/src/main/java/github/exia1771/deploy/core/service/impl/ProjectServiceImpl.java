@@ -55,13 +55,13 @@ public class ProjectServiceImpl extends BaseServiceImpl<String, Project> impleme
 
     @Override
     protected void beforeSave(Project project) {
-        Validators.requireLength("工程名称", project.getName(), 1, 255);
-        Validators.requireLength("工程标识", project.getIdentification(), 1, 255);
+        Validators.requireLength("工程名称", project.getName(), 1, 255, true);
+        Validators.requireLength("工程标识", project.getIdentification(), 1, 255, true);
         Validators.requireMatchRegex("工程标识", project.getIdentification(), "^[\\w-]+$");
-        Validators.requireLength("Git地址", project.getGitUrl(), 1, 255);
+        Validators.requireLength("Git地址", project.getGitUrl(), 1, 255, true);
         Validators.requireMatchRegex("Git地址", project.getGitUrl(), "^(http|https):\\/\\/.*?\\/.*?.git$");
-        Validators.requireLength("所属用户名", project.getUsername(), 1, 255);
-        Validators.requireLength("相关描述", project.getDescription(), 0, 255);
+        Validators.requireLength("所属用户名", project.getUsername(), 1, 255, true);
+        Validators.requireLength("相关描述", project.getDescription(), 0, 255, false);
 
         master = userService.findByName(project.getUsername());
         if (master == null || master.getUsername() == null) {
@@ -82,7 +82,18 @@ public class ProjectServiceImpl extends BaseServiceImpl<String, Project> impleme
 
     @Override
     public List<ProjectDTO> findProjectsByCurrentUser(Project project) {
-        return findProjectsByUserId(getCurrentUser().getUserId()).stream().map(Project::toDTO).collect(Collectors.toList());
+        Long current = project.getCurrent();
+        Long size = project.getSize();
+
+        if (current == null || current <= 0) {
+            current = 0L;
+        }
+
+        if (size == null || size <= 10) {
+            size = 10L;
+        }
+
+        return findProjectsByUserId(getCurrentUser().getUserId(), current, size).stream().map(Project::toDTO).collect(Collectors.toList());
     }
 
     @Override
