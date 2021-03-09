@@ -1,5 +1,6 @@
 package github.exia1771.deploy.common.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import github.exia1771.deploy.common.entity.AbstractEntity;
@@ -16,9 +17,13 @@ public interface BaseService<K extends Serializable, T extends AbstractEntity<K>
 
     Boolean deleteById(K id);
 
+    int batchDeleteByIdList(List<K> idList);
+
     List<T> findAll();
 
     IPage<T> pageAll(Page<T> page);
+
+    IPage<T> pageAll(Page<T> page, QueryWrapper<T> wrapper);
 
     Boolean isExisted(Map<String, Object> params);
 }

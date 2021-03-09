@@ -36,19 +36,19 @@ public abstract class BaseServiceImpl<K extends Serializable, T extends Abstract
 
     protected void validateCreatePri() {
         if (getRole() != null && (getRole().getCreatePri() == null || !getRole().getCreatePri())) {
-            throw new ValidationException("该账号缺少当前模块的创建权限");
+            throw new ValidationException("该账号缺少创建权限");
         }
     }
 
     protected void validateUpdatePri() {
         if (getRole() != null && (getRole().getUpdatePri() == null || !getRole().getUpdatePri())) {
-            throw new ValidationException("该账号缺少当前模块的修改权限");
+            throw new ValidationException("该账号缺少修改权限");
         }
     }
 
     protected void validateDeletePri() {
         if (getRole() != null && (getRole().getDeletePri() == null || !getRole().getDeletePri())) {
-            throw new ValidationException("该账号缺少当前模块的删除权限");
+            throw new ValidationException("该账号缺少删除权限");
         }
     }
 
@@ -56,7 +56,7 @@ public abstract class BaseServiceImpl<K extends Serializable, T extends Abstract
         return null;
     }
 
-    public Users.SimpleUser getCurrentUser(){
+    public Users.SimpleUser getCurrentUser() {
         return null;
     }
 
@@ -67,7 +67,7 @@ public abstract class BaseServiceImpl<K extends Serializable, T extends Abstract
             validateCreatePri();
             beforeInsert(t);
 
-            if(getCurrentUser() != null) {
+            if (getCurrentUser() != null) {
                 t.setCreatorId(getCurrentUser().getUserId());
                 t.setUpdaterId(getCurrentUser().getUserId());
             }
@@ -79,7 +79,7 @@ public abstract class BaseServiceImpl<K extends Serializable, T extends Abstract
             validateUpdatePri();
             beforeUpdate(t);
 
-            if(getCurrentUser() != null){
+            if (getCurrentUser() != null) {
                 t.setUpdaterId(getCurrentUser().getUserId());
             }
 
@@ -89,15 +89,23 @@ public abstract class BaseServiceImpl<K extends Serializable, T extends Abstract
         return t;
     }
 
-    protected void beforeDelete(K id) {
+    protected void beforeDelete() {
     }
+
 
     @Override
     public Boolean deleteById(K id) {
         validateDeletePri();
-        beforeDelete(id);
+        beforeDelete();
         int rows = mapper.deleteById(id);
         return rows != 0;
+    }
+
+    @Override
+    public int batchDeleteByIdList(List<K> idList) {
+        validateDeletePri();
+        beforeDelete();
+        return mapper.deleteBatchIds(idList);
     }
 
     @Override
@@ -113,6 +121,11 @@ public abstract class BaseServiceImpl<K extends Serializable, T extends Abstract
     @Override
     public IPage<T> pageAll(Page<T> page) {
         return mapper.selectPage(page, null);
+    }
+
+    @Override
+    public IPage<T> pageAll(Page<T> page, QueryWrapper<T> wrapper) {
+        return mapper.selectPage(page, wrapper);
     }
 
     @Override

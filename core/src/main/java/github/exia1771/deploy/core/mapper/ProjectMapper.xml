@@ -3,17 +3,5 @@
 
 <mapper namespace="github.exia1771.deploy.core.mapper.ProjectMapper">
 
-    <select id="findListById" parameterType="java.util.List" resultType="github.exia1771.deploy.core.entity.Project">
-
-        select * from project
-        where id in
-
-        <foreach open="(" close=")" collection="list" item="item" index="index" separator=",">
-            #{item}
-        </foreach>
-
-        limit #{size} * (#{current} - 1) , #{size}
-
-    </select>
 
 </mapper>

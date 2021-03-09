@@ -1,5 +1,8 @@
 package github.exia1771.deploy.core.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import github.exia1771.deploy.common.entity.Role;
 import github.exia1771.deploy.common.entity.User;
 import github.exia1771.deploy.common.service.RoleService;
@@ -8,6 +11,7 @@ import github.exia1771.deploy.common.service.impl.BaseServiceImpl;
 import github.exia1771.deploy.common.util.Commons;
 import github.exia1771.deploy.common.util.Users;
 import github.exia1771.deploy.common.util.Validators;
+import github.exia1771.deploy.core.Pageable;
 import github.exia1771.deploy.core.dto.ProjectDTO;
 import github.exia1771.deploy.core.entity.ImageTemplate;
 import github.exia1771.deploy.core.entity.Project;
@@ -37,6 +41,12 @@ public class ProjectServiceImpl extends BaseServiceImpl<String, Project> impleme
     private RoleService roleService;
     @Autowired
     private ProjectUserService projectUserService;
+
+
+    private static final String COLUMN_ID = "id";
+    private static final String COLUMN_NAME = "name";
+    private static final String COLUMN_USER_NAME = "username";
+    private static final String COLUMN_IDENTIFICATION = "identification";
 
     public ProjectServiceImpl(ProjectMapper mapper) {
         super(mapper);
@@ -81,24 +91,36 @@ public class ProjectServiceImpl extends BaseServiceImpl<String, Project> impleme
     }
 
     @Override
-    public List<ProjectDTO> findProjectsByCurrentUser(Project project) {
-        Long current = project.getCurrent();
-        Long size = project.getSize();
+    public IPage<ProjectDTO> findProjectsByCurrentUser(Pageable pageable) {
+        Long current = pageable.getCurrent();
+        Long size = pageable.getSize();
 
         if (current == null || current <= 0) {
-            current = 0L;
+            current = 1L;
         }
 
-        if (size == null || size <= 10) {
+        if (size == null || size <= 0) {
             size = 10L;
         }
 
-        return findProjectsByUserId(getCurrentUser().getUserId(), current, size).stream().map(Project::toDTO).collect(Collectors.toList());
+        IPage<Project> projectsByUserId = findProjectsByUserId(getCurrentUser().getUserId(), current, size);
+        return projectsByUserId.convert(Project::toDTO);
     }
 
     @Override
-    public List<Project> findProjectsByUserId(String userId, long current, long size) {
+    public IPage<Project> findProjectsByUserId(String userId, long current, long size) {
         List<String> projectIdList = projectUserService.findByUserId(userId).stream().map(ProjectUser::getProjectId).collect(Collectors.toList());
-        return mapper.findListById(projectIdList, current, size);
+        QueryWrapper<Project> wrapper = new QueryWrapper<>();
+        wrapper.in(COLUMN_ID, projectIdList);
+        return pageAll(new Page<>(current, size), wrapper);
+    }
+
+    @Override
+    public IPage<ProjectDTO> findPagedProjectsByKeyword(String keyword, Pageable pageable) {
+        QueryWrapper<Project> wrapper = new QueryWrapper<>();
+        wrapper.like(COLUMN_NAME, keyword);
+        wrapper.or(w -> w.like(COLUMN_USER_NAME, keyword));
+        wrapper.or(w -> w.like(COLUMN_IDENTIFICATION, keyword));
+        return pageAll(new Page<>(pageable.getCurrent(), pageable.getSize()), wrapper).convert(Project::toDTO);
     }
 }
