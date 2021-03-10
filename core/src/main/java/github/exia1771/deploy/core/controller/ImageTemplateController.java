@@ -5,17 +5,17 @@ import github.exia1771.deploy.common.util.CommonResponse;
 import github.exia1771.deploy.common.util.ResponseBody;
 import github.exia1771.deploy.core.entity.ImageTemplate;
 import github.exia1771.deploy.core.service.ImageTemplateService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/template")
+@AllArgsConstructor
 public class ImageTemplateController {
 
-    @Autowired
-    private ImageTemplateService service;
+    private final ImageTemplateService service;
 
     @PostMapping("/pageAll")
     public ResponseEntity<ResponseBody> pageAll(@RequestBody Page<ImageTemplate> page) {
@@ -52,8 +52,13 @@ public class ImageTemplateController {
         return CommonResponse.success(service.findTagsByTemplateName(templateName));
     }
 
-    @GetMapping("/id")
+    @GetMapping("/find")
     public ResponseEntity<ResponseBody> findTemplateIdByTemplateNameAndTag(ImageTemplate template) {
         return CommonResponse.success(service.findIdByTemplateNameAndTag(template));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseBody> findTemplateById(@PathVariable("id") String id) {
+        return CommonResponse.success(service.findById(id).toDTO());
     }
 }

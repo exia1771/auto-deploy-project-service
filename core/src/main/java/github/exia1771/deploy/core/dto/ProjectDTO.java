@@ -14,6 +14,5 @@ public class ProjectDTO extends AbstractDTO<String> {
     private String description;
     private String identification;
     private String gitUrl;
-    private String fileLocation;
 
 }

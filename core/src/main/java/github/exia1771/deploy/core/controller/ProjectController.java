@@ -48,4 +48,9 @@ public class ProjectController {
         return CommonResponse.success(service.batchDeleteByIdList(id));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseBody> findProjectById(@PathVariable("id") String id) {
+        return CommonResponse.success(service.findById(id).toDTO());
+    }
+
 }

@@ -42,7 +42,6 @@ public class ProjectServiceImpl extends BaseServiceImpl<String, Project> impleme
     @Autowired
     private ProjectUserService projectUserService;
 
-
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_USER_NAME = "username";
@@ -82,6 +81,7 @@ public class ProjectServiceImpl extends BaseServiceImpl<String, Project> impleme
         if (imageTemplate == null) {
             throw new ValidationException("不存在的模板类型，请重新选择");
         }
+        // TODO 根据Git地址拉取Tag列表，依据URL和Tag下载代码压缩包，Jenkins编译后制作镜像
     }
 
     @Override
