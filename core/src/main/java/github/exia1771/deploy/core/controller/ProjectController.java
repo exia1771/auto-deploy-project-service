@@ -43,6 +43,12 @@ public class ProjectController {
         return CommonResponse.success(service.deleteById(id));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ResponseBody> updateProjectById(@PathVariable("id") String id, @RequestBody Project project) {
+        project.setId(id);
+        return CommonResponse.success(service.save(project).toDTO());
+    }
+
     @PostMapping("/delete")
     public ResponseEntity<ResponseBody> batchDeleteProjectsByIdList(@RequestBody List<String> id) {
         return CommonResponse.success(service.batchDeleteByIdList(id));
