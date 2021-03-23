@@ -8,8 +8,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/project")
 @AllArgsConstructor
@@ -49,10 +47,6 @@ public class ProjectController {
         return CommonResponse.success(service.save(project).toDTO());
     }
 
-    @PostMapping("/delete")
-    public ResponseEntity<ResponseBody> batchDeleteProjectsByIdList(@RequestBody List<String> id) {
-        return CommonResponse.success(service.batchDeleteByIdList(id));
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponseBody> findProjectById(@PathVariable("id") String id) {

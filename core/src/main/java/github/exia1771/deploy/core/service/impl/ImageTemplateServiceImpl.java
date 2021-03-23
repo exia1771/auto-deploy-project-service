@@ -8,7 +8,7 @@ import github.exia1771.deploy.common.exception.ServiceException;
 import github.exia1771.deploy.common.service.RoleService;
 import github.exia1771.deploy.common.service.impl.BaseServiceImpl;
 import github.exia1771.deploy.common.util.Commons;
-import github.exia1771.deploy.common.util.Strings;
+import github.exia1771.deploy.common.util.StringUtil;
 import github.exia1771.deploy.common.util.Users;
 import github.exia1771.deploy.core.dto.ImageTemplateDTO;
 import github.exia1771.deploy.core.entity.ImageTemplate;
@@ -46,25 +46,25 @@ public class ImageTemplateServiceImpl extends BaseServiceImpl<String, ImageTempl
 
     private void validImageTemplate(ImageTemplate template) {
 
-        if (template.getTemplateName() == null
-                || template.getTemplateTag() == null
-                || template.getDockerImageId() == null) {
-            throw new ValidationException("模板名称，模板标签，镜像ID不能为NULL");
-        }
+		if (template.getTemplateName() == null
+				|| template.getTemplateTag() == null
+				|| template.getDockerImageId() == null) {
+			throw new ValidationException("模板名称，模板标签，镜像ID不能为NULL");
+		}
 
-        if (!Strings.isLengthBetween(template.getTemplateName(), 1, 255) ||
-                !Strings.isLengthBetween(template.getTemplateTag(), 1, 255) ||
-                !Strings.isLengthBetween(template.getDockerImageId(), 1, 255)) {
-            throw new ValidationException("字符长度必须在 1 ~ 255 之间");
-        }
+		if (!StringUtil.isLengthBetween(template.getTemplateName(), 1, 255) ||
+				!StringUtil.isLengthBetween(template.getTemplateTag(), 1, 255) ||
+				!StringUtil.isLengthBetween(template.getDockerImageId(), 1, 255)) {
+			throw new ValidationException("字符长度必须在 1 ~ 255 之间");
+		}
 
-        JSONObject inspect = imageService.inspect(template.getDockerImageId());
-        if (inspect == null) {
-            throw new ValidationException("不存在的镜像ID");
-        }
+		JSONObject inspect = imageService.inspect(template.getDockerImageId());
+		if (inspect == null) {
+			throw new ValidationException("不存在的镜像ID");
+		}
 
-        Map<String, Object> params = new HashMap<>();
-        params.put(TEMPLATE_NAME_COLUMN, template.getTemplateName());
+		Map<String, Object> params = new HashMap<>();
+		params.put(TEMPLATE_NAME_COLUMN, template.getTemplateName());
         params.put(TEMPLATE_TAG_COLUMN, template.getTemplateTag());
 
         if (isExisted(params)) {

@@ -9,7 +9,9 @@ import lombok.EqualsAndHashCode;
 public class ProjectConfigDTO extends AbstractDTO<String> {
 
     private String namespace;
-    private String group;
-    private String config;
+    private long memory;
+    private long storage;
+    private long core;
+    private String port;
 
 }

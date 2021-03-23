@@ -13,7 +13,8 @@ public class Project extends AbstractEntity<String> implements Pageable {
 
     private String username;
     private String templateId;
-    private String name;
+	private String configId;
+	private String name;
     private String description;
     private String identification;
     private String gitUrl;

@@ -11,8 +11,11 @@ import org.springframework.beans.BeanUtils;
 public class ProjectConfig extends AbstractEntity<String> {
 
     private String namespace;
-    private String group;
-    private String config;
+    private long memory = 1024;
+    private long storage = 2048;
+    private long core = 2;
+    private String port;
+
 
     @Override
     public ProjectConfigDTO toDTO() {
