@@ -10,17 +10,18 @@ import org.springframework.beans.BeanUtils;
 @EqualsAndHashCode(callSuper = true)
 public class ProjectConfig extends AbstractEntity<String> {
 
-    private String namespace;
-    private long memory = 1024;
-    private long storage = 2048;
-    private long core = 2;
-    private String port;
+	private String namespaceId;
+	private String projectId;
+	private long memory = 0;
+	private long storage = 0;
+	private long core = 0;
+	private String port;
 
 
-    @Override
-    public ProjectConfigDTO toDTO() {
-        ProjectConfigDTO projectConfigDTO = new ProjectConfigDTO();
-        BeanUtils.copyProperties(this, projectConfigDTO);
-        return projectConfigDTO;
-    }
+	@Override
+	public ProjectConfigDTO toDTO() {
+		ProjectConfigDTO projectConfigDTO = new ProjectConfigDTO();
+		BeanUtils.copyProperties(this, projectConfigDTO);
+		return projectConfigDTO;
+	}
 }

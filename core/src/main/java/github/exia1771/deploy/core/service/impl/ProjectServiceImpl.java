@@ -18,7 +18,6 @@ import github.exia1771.deploy.core.entity.Project;
 import github.exia1771.deploy.core.entity.ProjectUser;
 import github.exia1771.deploy.core.mapper.ProjectMapper;
 import github.exia1771.deploy.core.service.ImageTemplateService;
-import github.exia1771.deploy.core.service.ProjectConfigService;
 import github.exia1771.deploy.core.service.ProjectService;
 import github.exia1771.deploy.core.service.ProjectUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +35,6 @@ public class ProjectServiceImpl extends BaseServiceImpl<String, Project> impleme
 
 	@Autowired
 	private UserService userService;
-	@Autowired
-	private ProjectConfigService projectConfigService;
 	@Autowired
 	private ImageTemplateService imageTemplateService;
 	@Autowired

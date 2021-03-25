@@ -15,14 +15,13 @@ import github.exia1771.deploy.core.service.ProjectConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ProjectConfigServiceImpl extends BaseServiceImpl<String, ProjectConfig> implements ProjectConfigService {
 
 	private final ProjectConfigMapper mapper;
-	private static final String NAMESPACE_COLUMN = "namespace";
+	private static final String NAMESPACE_COLUMN = "namespace_id";
+	private static final String PROJECT_COLUMN = "project_id";
 
 	@Autowired
 	private RoleService roleService;
@@ -34,9 +33,10 @@ public class ProjectConfigServiceImpl extends BaseServiceImpl<String, ProjectCon
 
 	@Override
 	protected void beforeSave(ProjectConfig projectConfig) {
-		Validators.requireLength("名称空间", projectConfig.getNamespace(), 1, 255, true);
-		Validators.requireSize("内存大小", projectConfig.getMemory(), 1, 2048);
-		Validators.requireSize("硬盘存储大小", projectConfig.getStorage(), 1, 2048);
+		Validators.requireNotNull("工程ID", projectConfig.getProjectId());
+		Validators.requireNotNull("名称空间ID", projectConfig.getNamespaceId());
+		Validators.requireSize("内存大小", projectConfig.getMemory(), 1024, 2048);
+		Validators.requireSize("硬盘存储大小", projectConfig.getStorage(), 1024, 2048);
 		Validators.requireSize("CPU核心数量", projectConfig.getCore(), 1, 4);
 		if (projectConfig.getPort() != null) {
 			Validators.requireClassType("端口号", projectConfig.getPort(), JSON::parseArray);
@@ -59,13 +59,14 @@ public class ProjectConfigServiceImpl extends BaseServiceImpl<String, ProjectCon
 	}
 
 	@Override
-	public List<ProjectConfigDTO> findDistinctNamespaces() {
+	public ProjectConfigDTO findByProjectIdAndNamespaceId(String projectId, String namespaceId) {
 		QueryWrapper<ProjectConfig> wrapper = new QueryWrapper<>();
-		wrapper.groupBy(NAMESPACE_COLUMN);
-		wrapper.select(NAMESPACE_COLUMN);
-		return mapper.selectList(wrapper)
-				.stream()
-				.map(ProjectConfig::toDTO)
-				.collect(Collectors.toList());
+		wrapper.eq(PROJECT_COLUMN, projectId);
+		wrapper.eq(NAMESPACE_COLUMN, namespaceId);
+		ProjectConfig projectConfig = mapper.selectOne(wrapper);
+		if (projectConfig == null) {
+			return new ProjectConfig().toDTO();
+		}
+		return projectConfig.toDTO();
 	}
 }

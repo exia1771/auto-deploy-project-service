@@ -20,14 +20,14 @@ public class ProjectConfigController {
 		return CommonResponse.success(service.save(projectConfig).toDTO());
 	}
 
-	@GetMapping("/namespaces")
-	public ResponseEntity<ResponseBody> findDistinctNamespaces() {
-		return CommonResponse.success(service.findDistinctNamespaces());
-	}
-
 	@GetMapping("/{id}")
 	public ResponseEntity<ResponseBody> findById(@PathVariable("id") String id) {
 		return CommonResponse.success(service.findById(id).toDTO());
 	}
 
+	@GetMapping
+	public ResponseEntity<ResponseBody> findByProjectIdAndNamespaceId(@RequestParam("projectId") String projectId,
+																	  @RequestParam("namespaceId") String namespaceId) {
+		return CommonResponse.success(service.findByProjectIdAndNamespaceId(projectId, namespaceId));
+	}
 }

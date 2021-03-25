@@ -1,5 +1,6 @@
 package github.exia1771.deploy.common.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -136,6 +137,10 @@ public abstract class BaseServiceImpl<K extends Serializable, T extends Abstract
 	public Boolean isExisted(Map<String, Object> params) {
 		QueryWrapper<T> wrapper = new QueryWrapper<>();
 		wrapper.allEq(params);
+		return isExisted(wrapper);
+	}
+
+	public Boolean isExisted(Wrapper<T> wrapper) {
 		List<T> list = mapper.selectList(wrapper);
 		return list != null && list.size() >= 1;
 	}
