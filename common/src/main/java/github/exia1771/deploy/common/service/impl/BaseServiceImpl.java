@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import github.exia1771.deploy.common.entity.AbstractEntity;
 import github.exia1771.deploy.common.entity.Role;
 import github.exia1771.deploy.common.service.BaseService;
-import github.exia1771.deploy.common.util.Dates;
+import github.exia1771.deploy.common.util.DateUtil;
 import github.exia1771.deploy.common.util.Users;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,15 +66,14 @@ public abstract class BaseServiceImpl<K extends Serializable, T extends Abstract
 		beforeSave(t);
 		if (t.getId() == null) {
 			validateCreatePri();
-			beforeInsert(t);
-
 			if (getCurrentUser() != null) {
 				t.setCreatorId(getCurrentUser().getUserId());
 				t.setUpdaterId(getCurrentUser().getUserId());
 			}
 
-			t.setCreationTime(Dates.now());
-			t.setUpdateTime(Dates.now());
+			t.setCreationTime(DateUtil.now());
+			t.setUpdateTime(DateUtil.now());
+			beforeInsert(t);
 			mapper.insert(t);
 		} else {
 			validateUpdatePri();
@@ -84,7 +83,7 @@ public abstract class BaseServiceImpl<K extends Serializable, T extends Abstract
 				t.setUpdaterId(getCurrentUser().getUserId());
 			}
 
-			t.setUpdateTime(Dates.now());
+			t.setUpdateTime(DateUtil.now());
 			mapper.updateById(t);
 		}
 		return t;

@@ -6,15 +6,23 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface FileService {
 
-    FileDTO upload(MultipartFile file, FileRequest request);
+	FileDTO upload(MultipartFile file, FileRequest request);
 
-    default FileDTO upload(MultipartFile file) {
-        return upload(file, null);
-    }
+	String getServerAddress();
 
-    FileDTO download(String url, FileRequest request);
+	String getScheme();
 
-    default FileDTO download(String url) {
-        return download(url, null);
-    }
+	default String getURL() {
+		return getScheme() + getServerAddress();
+	}
+
+	default FileDTO upload(MultipartFile file) {
+		return upload(file, null);
+	}
+
+	FileDTO download(String url, FileRequest request);
+
+	default FileDTO download(String url) {
+		return download(url, null);
+	}
 }

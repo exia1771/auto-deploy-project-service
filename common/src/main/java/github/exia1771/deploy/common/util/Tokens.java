@@ -31,17 +31,17 @@ public abstract class Tokens {
     public static final Duration EXPIRATION_MINUTES = Duration.ofMinutes(30);
 
     public static String create(Map<String, Object> map) {
-        Date now = Dates.now();
-        Date expiration = Dates.plus(now, EXPIRATION_MINUTES);
-        return Jwts.builder()
-                .setId(Commons.getId())
-                .setSubject(SUBJECT)
-                .setIssuedAt(now)
-                .signWith(KEY)
-                .setExpiration(expiration)
-                .addClaims(map)
-                .compact();
-    }
+		Date now = DateUtil.now();
+		Date expiration = DateUtil.plus(now, EXPIRATION_MINUTES);
+		return Jwts.builder()
+				.setId(Commons.getId())
+				.setSubject(SUBJECT)
+				.setIssuedAt(now)
+				.signWith(KEY)
+				.setExpiration(expiration)
+				.addClaims(map)
+				.compact();
+	}
 
     public static Claims parse(String token) {
         return Jwts.parserBuilder()
@@ -60,10 +60,10 @@ public abstract class Tokens {
     }
 
     public static Boolean isWillExpire(String token) {
-        Claims parse = parse(token);
-        Date expiration = parse.getExpiration();
-        Duration minus = Dates.minus(Dates.now(), expiration);
-        return Dates.minus(DEATH_MINUTES, minus).isNegative();
-    }
+		Claims parse = parse(token);
+		Date expiration = parse.getExpiration();
+		Duration minus = DateUtil.minus(DateUtil.now(), expiration);
+		return DateUtil.minus(DEATH_MINUTES, minus).isNegative();
+	}
 
 }

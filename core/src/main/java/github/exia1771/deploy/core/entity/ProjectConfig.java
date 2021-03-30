@@ -12,9 +12,8 @@ public class ProjectConfig extends AbstractEntity<String> {
 
 	private String namespaceId;
 	private String projectId;
-	private long memory = 0;
-	private long storage = 0;
-	private long core = 0;
+	private long memory = 1024;
+	private long core = 1;
 	private String port;
 
 

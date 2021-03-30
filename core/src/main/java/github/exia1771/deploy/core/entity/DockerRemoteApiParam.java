@@ -1,6 +1,6 @@
 package github.exia1771.deploy.core.entity;
 
-import github.exia1771.deploy.core.abs.AbstractRemoteApiParam;
+import github.exia1771.deploy.core.service.docker.AbstractRemoteApiParam;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

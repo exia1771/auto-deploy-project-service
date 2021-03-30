@@ -9,9 +9,9 @@ import github.exia1771.deploy.common.service.RoleService;
 import github.exia1771.deploy.common.service.UserService;
 import github.exia1771.deploy.common.service.impl.BaseServiceImpl;
 import github.exia1771.deploy.common.util.Commons;
+import github.exia1771.deploy.common.util.Pageable;
 import github.exia1771.deploy.common.util.Users;
 import github.exia1771.deploy.common.util.Validators;
-import github.exia1771.deploy.core.Pageable;
 import github.exia1771.deploy.core.dto.ProjectDTO;
 import github.exia1771.deploy.core.entity.ImageTemplate;
 import github.exia1771.deploy.core.entity.Project;
@@ -81,7 +81,12 @@ public class ProjectServiceImpl extends BaseServiceImpl<String, Project> impleme
 		if (imageTemplate == null) {
 			throw new ValidationException("不存在的模板类型，请重新选择");
 		}
-		// TODO 根据Git地址拉取Tag列表，依据URL和Tag下载代码压缩包，Jenkins编译后制作镜像
+
+		QueryWrapper<Project> wrapper = new QueryWrapper<>();
+		wrapper.eq(COLUMN_IDENTIFICATION, project.getIdentification());
+		if (isExisted(wrapper)) {
+			throw new ValidationException("已经存在的工程标识，请重新指定");
+		}
 	}
 
 	@Override

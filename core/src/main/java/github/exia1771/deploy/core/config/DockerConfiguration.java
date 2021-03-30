@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 public class DockerConfiguration {
 
     private final DockerProperties properties;
-    private static final RestTemplate restTemplate = new RestTemplate();
+	private static final RestTemplate TEMPLATE = new RestTemplate();
 
     public DockerConfiguration(DockerProperties properties) {
         this.properties = properties;
@@ -27,7 +27,7 @@ public class DockerConfiguration {
         new Thread(() -> {
             while (true) {
                 try {
-                    restTemplate.getForObject(properties.getServerAddress() + version, JSONObject.class);
+					TEMPLATE.getForObject(properties.getServerAddress() + version, JSONObject.class);
                     break;
                 } catch (ResourceAccessException e) {
                     log.error("Docker Remote Api 无法正确连接");
@@ -38,7 +38,7 @@ public class DockerConfiguration {
 
     @Bean
     public RestTemplate restTemplate() {
-        return restTemplate;
+		return TEMPLATE;
     }
 
 }

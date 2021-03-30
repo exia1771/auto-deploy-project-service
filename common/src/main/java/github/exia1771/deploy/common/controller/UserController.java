@@ -54,14 +54,19 @@ public class UserController {
         return CommonResponse.success(userService.updateBasicInfo(user));
     }
 
-    @PostMapping("/avatar")
-    public ResponseEntity<ResponseBody> uploadAvatar(@RequestParam("avatar") MultipartFile file) {
-        return CommonResponse.success(userService.uploadAvatar(file));
-    }
+	@PostMapping("/avatar")
+	public ResponseEntity<ResponseBody> uploadAvatar(@RequestParam("avatar") MultipartFile file) {
+		return CommonResponse.success(userService.uploadAvatar(file));
+	}
 
-    @PutMapping("/password")
-    public ResponseEntity<ResponseBody> changePassword(@RequestBody @Valid Password password) {
-        userService.changePassword(password);
-        return CommonResponse.success();
-    }
+	@PutMapping("/password")
+	public ResponseEntity<ResponseBody> changePassword(@RequestBody @Valid Password password) {
+		userService.changePassword(password);
+		return CommonResponse.success();
+	}
+
+	@GetMapping("/dept/{id}")
+	public ResponseEntity<ResponseBody> findByDeptId(@PathVariable("id") String id) {
+		return CommonResponse.success(userService.findByDeptId(id));
+	}
 }

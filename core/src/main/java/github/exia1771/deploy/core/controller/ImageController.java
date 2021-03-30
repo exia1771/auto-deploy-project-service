@@ -3,7 +3,7 @@ package github.exia1771.deploy.core.controller;
 import github.exia1771.deploy.common.util.CommonResponse;
 import github.exia1771.deploy.common.util.ResponseBody;
 import github.exia1771.deploy.core.entity.DockerRemoteApiParam;
-import github.exia1771.deploy.core.service.ImageService;
+import github.exia1771.deploy.core.service.docker.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

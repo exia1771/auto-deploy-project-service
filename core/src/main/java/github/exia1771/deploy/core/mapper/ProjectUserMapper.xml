@@ -4,8 +4,8 @@
 <mapper namespace="github.exia1771.deploy.core.mapper.ProjectUserMapper">
 
     <insert id="batchAddProjectMember" parameterType="java.util.List">
-        insert into project_user
-        values (id, project_id, user_id, creator_id, creation_time, updater_id, update_time)
+        insert into project_user(id, project_id, user_id, creator_id, creation_time, updater_id, update_time)
+        values
 
         <foreach collection="list" item="item" index="index" separator=",">
             (

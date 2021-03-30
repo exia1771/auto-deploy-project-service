@@ -4,4 +4,11 @@ server:
 
 spring:
   application:
-    name: AUTO_DEPLOY_PROJECT_COMMON
+    name: AUTO_DEPLOY_PROJECT_SERVER
+  freemarker:
+    check-template-location: false
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:github/exia1771/deploy/**/mapper/**/*.xml

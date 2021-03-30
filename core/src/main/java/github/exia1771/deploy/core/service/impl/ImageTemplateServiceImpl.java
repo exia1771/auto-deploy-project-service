@@ -13,8 +13,8 @@ import github.exia1771.deploy.common.util.Users;
 import github.exia1771.deploy.core.dto.ImageTemplateDTO;
 import github.exia1771.deploy.core.entity.ImageTemplate;
 import github.exia1771.deploy.core.mapper.ImageTemplateMapper;
-import github.exia1771.deploy.core.service.ImageService;
 import github.exia1771.deploy.core.service.ImageTemplateService;
+import github.exia1771.deploy.core.service.docker.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

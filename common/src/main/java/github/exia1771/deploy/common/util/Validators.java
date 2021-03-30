@@ -35,7 +35,6 @@ public abstract class Validators {
 			String message = tip == null ? fieldName + String.format(NOT_BETWEEN_SIZE_MESSAGE, min, max) : tip;
 			throw new ValidationException(message);
 		}
-
 	}
 
 	public static void requireNotBlank(String fieldName, String field) {

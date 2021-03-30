@@ -1,6 +1,6 @@
 package github.exia1771.deploy.core.entity;
 
-import github.exia1771.deploy.core.abs.AbstractWebEntity;
+import github.exia1771.deploy.core.service.docker.AbstractWebEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

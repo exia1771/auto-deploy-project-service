@@ -7,6 +7,7 @@ import github.exia1771.deploy.common.entity.dto.UserDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 public interface UserService extends BaseService<String, User> {
 
@@ -20,13 +21,15 @@ public interface UserService extends BaseService<String, User> {
 
     void logout();
 
-    User findByName(String name);
+	User findByName(String name);
 
-    UserDTO updateBasicInfo(User user);
+	UserDTO updateBasicInfo(User user);
 
-    FileDTO uploadAvatar(MultipartFile file);
+	FileDTO uploadAvatar(MultipartFile file);
 
-    UserDTO updateAvatar(User user);
+	UserDTO updateAvatar(User user);
 
-    void changePassword(Password password);
+	void changePassword(Password password);
+
+	List<UserDTO> findByDeptId(String id);
 }

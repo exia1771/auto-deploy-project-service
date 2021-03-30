@@ -2,7 +2,7 @@ package github.exia1771.deploy.core.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import github.exia1771.deploy.common.service.BaseService;
-import github.exia1771.deploy.core.Pageable;
+import github.exia1771.deploy.common.util.Pageable;
 import github.exia1771.deploy.core.dto.ProjectDTO;
 import github.exia1771.deploy.core.entity.Project;
 

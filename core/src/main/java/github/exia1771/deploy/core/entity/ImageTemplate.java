@@ -1,7 +1,7 @@
 package github.exia1771.deploy.core.entity;
 
 import github.exia1771.deploy.common.entity.AbstractEntity;
-import github.exia1771.deploy.core.Pageable;
+import github.exia1771.deploy.common.util.Pageable;
 import github.exia1771.deploy.core.dto.ImageTemplateDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

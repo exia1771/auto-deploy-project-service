@@ -1,9 +1,9 @@
-package github.exia1771.deploy.core.abs;
+package github.exia1771.deploy.core.service.docker;
 
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.annotation.JSONType;
-import github.exia1771.deploy.common.util.Dates;
+import github.exia1771.deploy.common.util.DateUtil;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -18,7 +18,7 @@ public abstract class AbstractWebEntity {
 
     @JSONField(format = "yyyy-MM-dd hh:mm:ss")
     public LocalDateTime getCreatedTime() {
-        return Dates.toLocalDateTime(createdTimestamp * 1000);
+		return DateUtil.toLocalDateTime(createdTimestamp * 1000);
     }
 
 }

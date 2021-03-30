@@ -1,7 +1,7 @@
 package github.exia1771.deploy.core.entity;
 
 import github.exia1771.deploy.common.entity.AbstractEntity;
-import github.exia1771.deploy.core.Pageable;
+import github.exia1771.deploy.common.util.Pageable;
 import github.exia1771.deploy.core.dto.ProjectDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,7 +17,7 @@ public class Project extends AbstractEntity<String> implements Pageable {
     private String description;
     private String identification;
     private String gitUrl;
-    private int state;
+//    private int state;
 
     private transient Long current;
     private transient Long size;

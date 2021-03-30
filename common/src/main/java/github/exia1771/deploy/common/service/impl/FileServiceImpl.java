@@ -16,17 +16,19 @@ import java.io.IOException;
 @Service
 public class FileServiceImpl implements FileService {
 
-    private static final String contextPath = System.getProperty("user.dir");
+	private static final String contextPath = System.getProperty("user.dir");
+	private static final String HOST_PORT_SEPARATOR = ":";
+	private static final String SCHEME_SEPARATOR = "://";
 
-    private final FileProperties properties;
-    private final HttpServletRequest request;
+	private final FileProperties properties;
+	private final HttpServletRequest request;
 
-    public FileServiceImpl(HttpServletRequest request, FileProperties properties) {
-        this.request = request;
-        this.properties = properties;
-    }
+	public FileServiceImpl(HttpServletRequest request, FileProperties properties) {
+		this.request = request;
+		this.properties = properties;
+	}
 
-    private void validateFile(MultipartFile file, FileRequest request) {
+	private void validateFile(MultipartFile file, FileRequest request) {
         if (request.getMaxSize() != null) {
             long size = file.getSize();
             if (size > request.getMaxSize()) {
@@ -34,25 +36,31 @@ public class FileServiceImpl implements FileService {
             }
         }
 
-        if (request.getFileType() != null) {
-            String contentType = file.getContentType();
-            if (!request.getFileType().contains(contentType)) {
-                throw new ServiceException("文件的类型必须为" + request.getFileType());
-            }
+		if (request.getFileType() != null) {
+			String contentType = file.getContentType();
+			if (!request.getFileType().contains(contentType)) {
+				throw new ServiceException("文件的类型必须为" + request.getFileType());
+			}
 
-        }
+		}
 
-    }
+	}
 
-    @Override
-    public FileDTO upload(MultipartFile file, FileRequest fileRequest) {
-        validateFile(file, fileRequest);
 
-        String root = properties.getUpload().getRoot();
+	@Override
+	public String getScheme() {
+		return properties.getScheme() + SCHEME_SEPARATOR;
+	}
 
-        String workPath = root == null ? contextPath : root;
-        String fileName = fileRequest.getFileName() == null ? file.getName() : fileRequest.getFileName();
-        File filePath = new File(workPath + fileRequest.getDirectory(), fileName);
+	@Override
+	public FileDTO upload(MultipartFile file, FileRequest fileRequest) {
+		validateFile(file, fileRequest);
+
+		String root = properties.getUpload().getRoot();
+
+		String workPath = root == null ? contextPath : root;
+		String fileName = fileRequest.getFileName() == null ? file.getName() : fileRequest.getFileName();
+		File filePath = new File(workPath + fileRequest.getDirectory(), fileName);
 
         if (!filePath.getParentFile().exists()) {
             FileUtil.mkParentDirs(filePath);
@@ -61,20 +69,23 @@ public class FileServiceImpl implements FileService {
         try {
             file.transferTo(filePath);
         } catch (IOException e) {
-            throw new ServiceException(e.getMessage());
-        }
+			throw new ServiceException(e.getMessage());
+		}
 
-        String mappingUrl = properties.getUpload().getMappingUrl();
-        String serverAddress = request.getServerName() + ":" + request.getServerPort() + mappingUrl;
-        return new FileDTO() {{
-            setFileName(fileName);
-            setUrl(serverAddress + fileRequest.getDirectory() + fileName);
-        }};
-    }
+		String mappingUrl = properties.getUpload().getMappingUrl();
+		return new FileDTO() {{
+			setFileName(fileName);
+			setUrl(mappingUrl + fileRequest.getDirectory() + fileName);
+		}};
+	}
 
+	@Override
+	public String getServerAddress() {
+		return request.getServerName() + HOST_PORT_SEPARATOR + request.getServerPort();
+	}
 
-    @Override
-    public FileDTO download(String url, FileRequest request) {
-        return null;
-    }
+	@Override
+	public FileDTO download(String url, FileRequest request) {
+		return null;
+	}
 }

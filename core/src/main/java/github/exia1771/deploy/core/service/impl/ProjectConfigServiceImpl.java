@@ -36,7 +36,6 @@ public class ProjectConfigServiceImpl extends BaseServiceImpl<String, ProjectCon
 		Validators.requireNotNull("工程ID", projectConfig.getProjectId());
 		Validators.requireNotNull("名称空间ID", projectConfig.getNamespaceId());
 		Validators.requireSize("内存大小", projectConfig.getMemory(), 1024, 2048);
-		Validators.requireSize("硬盘存储大小", projectConfig.getStorage(), 1024, 2048);
 		Validators.requireSize("CPU核心数量", projectConfig.getCore(), 1, 4);
 		if (projectConfig.getPort() != null) {
 			Validators.requireClassType("端口号", projectConfig.getPort(), JSON::parseArray);

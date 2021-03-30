@@ -1,4 +1,4 @@
-package github.exia1771.deploy.core.abs;
+package github.exia1771.deploy.core.service.docker;
 
 import lombok.Data;
 
@@ -12,12 +12,12 @@ public abstract class AbstractRemoteApiParam {
     public static final Set<String> EXCLUDED_FIELDS = new HashSet<>();
 
     static {
-        EXCLUDED_FIELDS.add("filter");
+		EXCLUDED_FIELDS.add("filters");
     }
 
-    private Integer limit;
-    private String filter;
-    private Boolean all;
+	private Integer limit;
+	private String filters;
+	private Boolean all;
 
 
 }

@@ -1,4 +1,4 @@
-package github.exia1771.deploy.core;
+package github.exia1771.deploy.common.util;
 
 public interface Pageable {
 

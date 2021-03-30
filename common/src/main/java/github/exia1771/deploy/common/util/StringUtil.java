@@ -24,4 +24,8 @@ public class StringUtil {
 			return str.matches(BLANK_CHARACTER);
 		}
 	}
+
+	public boolean isNotBlank(String str) {
+		return !isBlank(str);
+	}
 }

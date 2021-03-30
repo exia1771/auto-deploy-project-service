@@ -3,27 +3,30 @@ server:
     session:
       cookie:
         domain: http://localhost:8080
+  port: 8081
 
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/auto_deploy_project?useSSL=false&characterEncoding=utf-8&serverTimezone=UTC
     username: root
     password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   redis:
-    host: 192.168.8.146
+    host: 172.16.1.243
     port: 6379
 
 file:
+  scheme: http
   upload:
     root: D:/文档/毕业设计/files
     mapping-url: /files
 
-mybatis-plus:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-  mapper-locations: classpath:/mapper/**/*.xml
+jenkins-client:
+  host: http://172.16.1.243:8080
+  admin: exia1771
+  password: xww19990712
 
 deploy:
   docker:
-    server-address: http://192.168.8.146:2375/
+    server-address: http://${spring.redis.host}:2375/

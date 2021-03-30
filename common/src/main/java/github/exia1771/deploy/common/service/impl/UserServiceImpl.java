@@ -24,205 +24,213 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl extends BaseServiceImpl<String, User> implements UserService {
 
-    private final UserMapper mapper;
-    private final HttpServletResponse response;
-    private static final String USER_NAME_EXISTED = "用户名已存在!";
-    private static final String USER_NAME_NOT_EXISTED = "用户名不存在!";
-    private static final String USER_NAME = "username";
-    private static final String PASSWORD_NOT_CORRECT = "密码错误!";
-    private static final Long DEFAULT_ROLE_ID = 1L;
+	private final UserMapper mapper;
+	private final HttpServletResponse response;
+	private static final String USER_NAME_EXISTED = "用户名已存在!";
+	private static final String USER_NAME_NOT_EXISTED = "用户名不存在!";
+	private static final String USER_NAME = "username";
+	private static final String PASSWORD_NOT_CORRECT = "密码错误!";
+	private static final Long DEFAULT_ROLE_ID = 1L;
+	private static final String DEPT_ID_COLUMN = "dept_id";
 
-    @Autowired
-    private FileService fileService;
+	@Autowired
+	private FileService fileService;
 
-    @Autowired
-    private RoleService roleService;
+	@Autowired
+	private RoleService roleService;
 
-    public UserServiceImpl(UserMapper mapper, HttpServletResponse response) {
-        super(mapper);
-        this.mapper = mapper;
-        this.response = response;
-    }
+	public UserServiceImpl(UserMapper mapper, HttpServletResponse response) {
+		super(mapper);
+		this.mapper = mapper;
+		this.response = response;
+	}
 
-    @Override
-    public Boolean isExistedName(String name) {
-        Map<String, Object> params = new HashMap<String, Object>() {{
-            put(USER_NAME, name);
-        }};
-        if (isExisted(params)) {
-            throw new ServiceException(USER_NAME_EXISTED);
-        }
-        return false;
-    }
+	@Override
+	public Boolean isExistedName(String name) {
+		Map<String, Object> params = new HashMap<String, Object>() {{
+			put(USER_NAME, name);
+		}};
+		if (isExisted(params)) {
+			throw new ServiceException(USER_NAME_EXISTED);
+		}
+		return false;
+	}
 
-    @Override
-    protected void beforeInsert(User user) {
-        if (isExistedName(user.getUsername())) {
-            throw new ServiceException(USER_NAME_EXISTED);
-        }
-        user.setId(Commons.getId());
-        user.setCreatorId(user.getId());
-        user.setUpdaterId(user.getId());
-        user.setRoleId(DEFAULT_ROLE_ID.toString());
-    }
-
-
-    @Override
-    public UserDTO submit(User user) throws UnsupportedEncodingException {
-        save(user);
-
-        UserDTO userDTO = user.toDTO();
-        Tokens.setCookie(response, Users.getUserToken(user));
-        return userDTO;
-    }
-
-    @Override
-    public User findByName(String name) {
-        QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq(USER_NAME, name);
-        return mapper.selectOne(wrapper);
-    }
-
-    @Override
-    public void logout() {
-        Users.SimpleUser user = Users.getSimpleUser();
-        Users.discardUserToken(user.getUserId().toString());
-    }
-
-    @Override
-    public UserDTO login(User user) throws UnsupportedEncodingException {
-        User savedUser = findByName(user.getUsername());
-        if (savedUser == null) {
-            throw new ServiceException(USER_NAME_NOT_EXISTED);
-        }
-        if (!savedUser.getPassword().equals(user.getPassword())) {
-            throw new ServiceException(PASSWORD_NOT_CORRECT);
-        }
-        UserDTO userDTO = savedUser.toDTO();
-
-        String token = Users.getUserToken(savedUser);
-        Tokens.setCookie(response, token);
-
-        Role role = roleService.findById(savedUser.getRoleId());
-        userDTO.setRole(role.toDTO());
-
-        return userDTO;
-    }
-
-    @Override
-    public UserDTO login() {
-        Users.SimpleUser user = Users.getSimpleUser();
-
-        UserDTO userDTO = findById(user.getUserId()).toDTO();
-        Role role = roleService.findById(user.getRoleId());
-        userDTO.setRole(role.toDTO());
-
-        return userDTO;
-    }
-
-    private void validateUpdate(User user) {
-        String email = user.getEmail();
-        if (StrUtil.isNotBlank(email)) {
-            if (255 < email.length() || email.length() < 6) {
-                throw new ValidationException("电子邮件的长度必须在 6~255 个字符");
-            }
-
-            String pattern = "^\\w+@[a-zA-Z0-9]{2,}(?:\\.[a-z]{1,4}){1,3}$";
-            if (!Pattern.matches(pattern, email)) {
-                throw new ValidationException("请输入正确的电子邮件");
-            }
-        }
-
-        String telephone = user.getTelephone();
-        if (StrUtil.isNotBlank(telephone)) {
-            if (255 < telephone.length() || telephone.length() < 6) {
-                throw new ValidationException("电子邮件的长度必须在 6~255 个字符");
-            }
-
-            String pattern = "^(([0-9]{1,11})|([0-9\\\\-]))$";
-            if (!Pattern.matches(pattern, telephone)) {
-                throw new ValidationException("请输入正确的联系电话");
-            }
-        }
-    }
-
-    @Override
-    public UserDTO updateBasicInfo(User user) {
-        validateUpdate(user);
-
-        User saved = getUser();
-        saved.setEmail(user.getEmail());
-        saved.setTelephone(user.getTelephone());
-        saved = save(saved);
-
-        return saved.toDTO();
-    }
-
-    private User getUser() {
-        Users.SimpleUser simpleUser = Users.getSimpleUser();
-        return findById(simpleUser.getUserId());
-    }
+	@Override
+	protected void beforeInsert(User user) {
+		if (isExistedName(user.getUsername())) {
+			throw new ServiceException(USER_NAME_EXISTED);
+		}
+		user.setId(Commons.getId());
+		user.setCreatorId(user.getId());
+		user.setUpdaterId(user.getId());
+		user.setRoleId(DEFAULT_ROLE_ID.toString());
+	}
 
 
-    @Override
-    public FileDTO uploadAvatar(MultipartFile file) {
-        String scheme = "http://";
-        Users.SimpleUser user = Users.getSimpleUser();
-        long maxSize = 1024 * 1024 * 4;
-        String directory = FileDTO.FILE_SEPARATOR + "avatar" + FileDTO.FILE_SEPARATOR;
-        String separator = "-";
+	@Override
+	public UserDTO submit(User user) throws UnsupportedEncodingException {
+		save(user);
 
-        FileRequest fileRequest = new FileRequest() {{
-            setMaxSize(maxSize);
-            setDirectory(directory);
-            setFileName(user.getUserId() + separator + file.getOriginalFilename());
-        }};
+		UserDTO userDTO = user.toDTO();
+		Tokens.setCookie(response, Users.getUserToken(user));
+		return userDTO;
+	}
 
-        FileDTO upload = fileService.upload(file, fileRequest);
-        upload.setUrl(scheme + upload.getUrl());
-        updateAvatar(new User() {{
-            setAvatarAddress(upload.getUrl());
-        }});
-        return upload;
+	@Override
+	public User findByName(String name) {
+		QueryWrapper<User> wrapper = new QueryWrapper<>();
+		wrapper.eq(USER_NAME, name);
+		return mapper.selectOne(wrapper);
+	}
 
-    }
+	@Override
+	public void logout() {
+		Users.SimpleUser user = Users.getSimpleUser();
+		Users.discardUserToken(user.getUserId().toString());
+	}
 
-    @Override
-    public UserDTO updateAvatar(User user) {
+	@Override
+	public UserDTO login(User user) throws UnsupportedEncodingException {
+		User savedUser = findByName(user.getUsername());
+		if (savedUser == null) {
+			throw new ServiceException(USER_NAME_NOT_EXISTED);
+		}
+		if (!savedUser.getPassword().equals(user.getPassword())) {
+			throw new ServiceException(PASSWORD_NOT_CORRECT);
+		}
+		UserDTO userDTO = savedUser.toDTO();
 
-        User saved = getUser();
-        saved.setAvatarAddress(user.getAvatarAddress());
-        saved = save(saved);
+		String token = Users.getUserToken(savedUser);
+		Tokens.setCookie(response, token);
 
-        return saved.toDTO();
-    }
+		Role role = roleService.findById(savedUser.getRoleId());
+		userDTO.setRole(role.toDTO());
 
-    private void validatePassword(User user, Password password) {
-        if (!password.getNewPassword().equals(password.getConfirmedPassword())) {
-            throw new ServiceException("新密码与确认密码输入不一致!");
-        }
+		return userDTO;
+	}
 
-        if (!user.getPassword().equals(password.getOldPassword())) {
-            throw new ServiceException("旧密码输入不正确!");
-        }
+	@Override
+	public UserDTO login() {
+		Users.SimpleUser user = Users.getSimpleUser();
 
-        if (user.getPassword().equals(password.getNewPassword())) {
-            throw new ServiceException("新密码不能与旧密码相同!");
-        }
-    }
+		UserDTO userDTO = findById(user.getUserId()).toDTO();
+		Role role = roleService.findById(user.getRoleId());
+		userDTO.setRole(role.toDTO());
 
-    @Override
-    public void changePassword(Password password) {
-        User user = getUser();
-        validatePassword(user, password);
+		return userDTO;
+	}
 
-        user.setPassword(password.getNewPassword());
-        save(user);
-    }
+	private void validateUpdate(User user) {
+		String email = user.getEmail();
+		if (StrUtil.isNotBlank(email)) {
+			if (255 < email.length() || email.length() < 6) {
+				throw new ValidationException("电子邮件的长度必须在 6~255 个字符");
+			}
+
+			String pattern = "^\\w+@[a-zA-Z0-9]{2,}(?:\\.[a-z]{1,4}){1,3}$";
+			if (!Pattern.matches(pattern, email)) {
+				throw new ValidationException("请输入正确的电子邮件");
+			}
+		}
+
+		String telephone = user.getTelephone();
+		if (StrUtil.isNotBlank(telephone)) {
+			if (255 < telephone.length() || telephone.length() < 6) {
+				throw new ValidationException("电子邮件的长度必须在 6~255 个字符");
+			}
+
+			String pattern = "^(([0-9]{1,11})|([0-9\\\\-]))$";
+			if (!Pattern.matches(pattern, telephone)) {
+				throw new ValidationException("请输入正确的联系电话");
+			}
+		}
+	}
+
+	@Override
+	public UserDTO updateBasicInfo(User user) {
+		validateUpdate(user);
+
+		User saved = getUser();
+		saved.setEmail(user.getEmail());
+		saved.setTelephone(user.getTelephone());
+		saved = save(saved);
+
+		return saved.toDTO();
+	}
+
+	private User getUser() {
+		Users.SimpleUser simpleUser = Users.getSimpleUser();
+		return findById(simpleUser.getUserId());
+	}
+
+
+	@Override
+	public FileDTO uploadAvatar(MultipartFile file) {
+		Users.SimpleUser user = Users.getSimpleUser();
+		long maxSize = 1024 * 1024 * 4;
+		String directory = FileDTO.FILE_SEPARATOR + "avatar" + FileDTO.FILE_SEPARATOR;
+		String separator = "-";
+
+		FileRequest fileRequest = new FileRequest() {{
+			setMaxSize(maxSize);
+			setDirectory(directory);
+			setFileName(user.getUserId() + separator + file.getOriginalFilename());
+		}};
+
+		FileDTO upload = fileService.upload(file, fileRequest);
+		updateAvatar(new User() {{
+			setAvatarAddress(upload.getUrl());
+		}});
+		return upload;
+	}
+
+	@Override
+	public UserDTO updateAvatar(User user) {
+
+		User saved = getUser();
+		saved.setAvatarAddress(user.getAvatarAddress());
+		saved = save(saved);
+
+		return saved.toDTO();
+	}
+
+	private void validatePassword(User user, Password password) {
+		if (!password.getNewPassword().equals(password.getConfirmedPassword())) {
+			throw new ServiceException("新密码与确认密码输入不一致!");
+		}
+
+		if (!user.getPassword().equals(password.getOldPassword())) {
+			throw new ServiceException("旧密码输入不正确!");
+		}
+
+		if (user.getPassword().equals(password.getNewPassword())) {
+			throw new ServiceException("新密码不能与旧密码相同!");
+		}
+	}
+
+	@Override
+	public void changePassword(Password password) {
+		User user = getUser();
+		validatePassword(user, password);
+
+		user.setPassword(password.getNewPassword());
+		save(user);
+	}
+
+	@Override
+	public List<UserDTO> findByDeptId(String id) {
+		QueryWrapper<User> wrapper = new QueryWrapper<>();
+		wrapper.eq(DEPT_ID_COLUMN, id);
+		List<User> users = mapper.selectList(wrapper);
+		return users.stream().map(User::toDTO).collect(Collectors.toList());
+	}
 }

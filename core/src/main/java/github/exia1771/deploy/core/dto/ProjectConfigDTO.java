@@ -10,7 +10,6 @@ public class ProjectConfigDTO extends AbstractDTO<String> {
 
     private String namespace;
     private long memory;
-    private long storage;
     private long core;
     private String port;
 

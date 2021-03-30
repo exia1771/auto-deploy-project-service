@@ -7,17 +7,17 @@ import java.time.ZoneId;
 import java.time.temporal.TemporalAmount;
 import java.util.Date;
 
-public abstract class Dates {
+public abstract class DateUtil {
 
-    private static final ZoneId ZONE_ID = ZoneId.systemDefault();
+	private static final ZoneId ZONE_ID = ZoneId.systemDefault();
 
-    public static Date now() {
-        return toDate(LocalDateTime.now());
-    }
+	public static Date now() {
+		return toDate(LocalDateTime.now());
+	}
 
-    public static Date toDate(LocalDateTime localDateTime) {
-        Instant instant = localDateTime.atZone(ZONE_ID).toInstant();
-        return Date.from(instant);
+	public static Date toDate(LocalDateTime localDateTime) {
+		Instant instant = localDateTime.atZone(ZONE_ID).toInstant();
+		return Date.from(instant);
     }
 
     public static LocalDateTime toLocalDateTime(Date date) {

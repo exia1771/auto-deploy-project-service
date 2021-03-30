@@ -9,13 +9,12 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 public class FileProperties {
 
     @NestedConfigurationProperty
-    private Upload upload;
+	private Upload upload;
+	private String scheme;
 
     @Data
     public static class Upload{
-
         private String root;
         private String mappingUrl;
-
     }
 }

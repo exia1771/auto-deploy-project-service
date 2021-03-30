@@ -7,20 +7,24 @@ import java.util.List;
 
 public interface ProjectUserService extends BaseService<String, ProjectUser> {
 
-    List<ProjectUser> findByUserId(String userId);
+	List<ProjectUser> findByUserId(String userId);
 
-    int addProjectMember(ProjectUser projectUser);
+	List<ProjectUser> findByProjectId(String projectId);
 
-    default int addProjectMember(String projectId, String userId) {
-        return addProjectMember(new ProjectUser() {{
-            setProjectId(projectId);
-            setUserId(userId);
-        }});
-    }
+	int addProjectMember(ProjectUser projectUser);
 
-    int batchAddProjectMember(List<ProjectUser> projectUsers);
+	default int addProjectMember(String projectId, String userId) {
+		return addProjectMember(new ProjectUser() {{
+			setProjectId(projectId);
+			setUserId(userId);
+		}});
+	}
 
-    int removeProjectMember(ProjectUser projectUser);
+	int batchAddProjectMember(List<ProjectUser> projectUsers);
 
-    int batchRemoveProjectMember(List<ProjectUser> projectUsers);
+	int removeProjectMember(ProjectUser projectUser);
+
+	int batchRemoveProjectMember(List<ProjectUser> projectUsers);
+
+	int batchUpdate(String projectId, List<String> userId);
 }

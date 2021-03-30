@@ -13,21 +13,23 @@ import javax.validation.constraints.Size;
 @EqualsAndHashCode(callSuper = true)
 public class User extends AbstractEntity<String> {
 
-    @NotNull
-    @NotBlank
-    @Size(min = 6, max = 255)
-    private String username;
+	@NotNull
+	@NotBlank
+	@Size(min = 6, max = 255)
+	private String username;
 
-    private String roleId;
+	private String roleId;
 
-    @NotNull
-    @NotBlank
-    @Size(min = 6, max = 255)
-    private String password;
+	private String deptId;
 
-    private String avatarAddress;
+	@NotNull
+	@NotBlank
+	@Size(min = 6, max = 255)
+	private String password;
 
-    private String email;
+	private String avatarAddress;
+
+	private String email;
 
     private String telephone;
 

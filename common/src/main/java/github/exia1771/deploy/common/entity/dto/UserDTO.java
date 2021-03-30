@@ -8,7 +8,8 @@ import lombok.EqualsAndHashCode;
 public class UserDTO extends AbstractDTO<String> {
 
     private RoleDTO role;
-    private String username;
+	private String deptId;
+	private String username;
     private String avatarAddress;
     private String email;
     private String telephone;

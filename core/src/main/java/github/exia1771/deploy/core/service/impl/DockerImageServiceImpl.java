@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import github.exia1771.deploy.core.entity.DockerRemoteApiParam;
 import github.exia1771.deploy.core.entity.Image;
 import github.exia1771.deploy.core.props.DockerProperties;
-import github.exia1771.deploy.core.service.ImageService;
+import github.exia1771.deploy.core.service.docker.ImageService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -33,6 +33,11 @@ public class DockerImageServiceImpl extends DockerContainerEngine implements Ima
     public List<Image> findByParam(DockerRemoteApiParam param) {
         String url = getRequestURL(param);
         return getRestTemplate().getForObject(url, JSONArray.class).toJavaList(Image.class);
+    }
+
+    @Override
+    public List<Image> findByParam(Object param, String url) {
+        return getRestTemplate().getForObject(url, JSONArray.class, param).toJavaList(Image.class);
     }
 
     @Override
