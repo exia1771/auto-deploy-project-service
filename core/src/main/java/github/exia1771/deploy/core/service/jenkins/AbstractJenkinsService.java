@@ -15,6 +15,8 @@ import github.exia1771.deploy.core.service.docker.ContainerService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
+import org.springframework.data.redis.core.BoundSetOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.io.IOException;
 import java.util.Map;
@@ -29,6 +31,7 @@ public abstract class AbstractJenkinsService implements JenkinsService {
 	protected final ProjectConfigService projectConfigService;
 	protected final ImageTemplateService imageTemplateService;
 	protected final ContainerService containerService;
+	protected final RedisTemplate<String, Object> redisTemplate;
 
 	@Override
 	public void createNewJob(String jobName, ProjectContainer projectContainer) throws IOException {
@@ -37,6 +40,7 @@ public abstract class AbstractJenkinsService implements JenkinsService {
 
 	@Override
 	public void build(ProjectContainer build) throws IOException {
+		BoundSetOperations<String, Object> abort = redisTemplate.boundSetOps("abort");
 		Project project = projectService.findById(build.getProjectId());
 		String jobName = project.getIdentification();
 		build.setJenkinsJobName(jobName);
@@ -53,12 +57,20 @@ public abstract class AbstractJenkinsService implements JenkinsService {
 		BuildResult result = null;
 		while (result == null) {
 			try {
-				TimeUnit.SECONDS.sleep(10);
 				job = server.getJob(jobName);
 				result = job.getBuildByNumber(build.getJenkinsBuildNumber()).details().getResult();
-				log.debug("{}.{}正在构建", build.getJenkinsJobName(), build.getJenkinsBuildNumber());
+				log.debug("{}.{} 正在构建", build.getJenkinsJobName(), build.getJenkinsBuildNumber());
+				Boolean member = abort.isMember(build.getId());
+				if (result == null && member != null && member) {
+					build.setStatus(ProjectContainer.Status.ABORT.getValue());
+					log.info("{}.{} 被要求终止构建", build.getJenkinsJobName(), build.getJenkinsBuildNumber());
+					abort.remove(build.getId());
+					return;
+				}
+				TimeUnit.SECONDS.sleep(10);
 			} catch (InterruptedException e) {
-				log.error("睡眠失败=>", e);
+				log.error("异常=>{}", e.getMessage());
+			} catch (NullPointerException ignored) {
 			}
 		}
 		if (result.equals(BuildResult.FAILURE)) {
@@ -86,4 +98,11 @@ public abstract class AbstractJenkinsService implements JenkinsService {
 	protected abstract Map<String, Object> getVariables(ProjectContainer projectContainer);
 
 	protected abstract Resource getTemplateFile();
+
+	@Override
+	public String stop(String jobName, int buildNumber) throws IOException {
+		JobWithDetails job = server.getJob(jobName);
+		Build build = job.getBuildByNumber(buildNumber);
+		return build.Stop();
+	}
 }

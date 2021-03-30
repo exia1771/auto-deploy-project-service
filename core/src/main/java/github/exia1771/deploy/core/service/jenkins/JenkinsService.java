@@ -14,4 +14,5 @@ public interface JenkinsService {
 
 	String getBuildLog(String jobName, int buildNumber) throws IOException;
 
+	String stop(String jobName, int buildNumber) throws IOException;
 }

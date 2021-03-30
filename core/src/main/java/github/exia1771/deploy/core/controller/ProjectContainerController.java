@@ -48,4 +48,19 @@ public class ProjectContainerController {
 	public ResponseEntity<ResponseBody> findById(@PathVariable("id") String id) {
 		return CommonResponse.success(service.findById(id).toDTO());
 	}
+
+	@GetMapping("/stop/{id}")
+	public ResponseEntity<ResponseBody> stopBuildByProjectId(@PathVariable("id") String id) {
+		return CommonResponse.success(service.stopBuild(id));
+	}
+
+	@GetMapping("/log")
+	public ResponseEntity<ResponseBody> findContainerLogById(@RequestParam("id") String id, @RequestParam("since") long timestamp) {
+		return CommonResponse.success(service.getContainerLog(id, timestamp));
+	}
+
+	@PostMapping("/restart/{id}")
+	public ResponseEntity<ResponseBody> restartContainer(@PathVariable("id") String id) {
+		return CommonResponse.success(service.restartContainer(id).getDescribe());
+	}
 }

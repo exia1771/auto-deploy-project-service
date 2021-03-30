@@ -43,7 +43,10 @@ public class ProjectContainer extends AbstractEntity<String> implements Pageable
 	public enum Status {
 		SUCCESS(0),
 		FAILURE(1),
-		WAIT(2);
+		WAIT(2),
+		ABORT(3),
+		ABORT_ERROR(4);
+
 		private final int value;
 
 		Status(int status) {

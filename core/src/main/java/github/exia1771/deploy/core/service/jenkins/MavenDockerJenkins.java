@@ -16,6 +16,7 @@ import github.exia1771.deploy.core.service.ProjectService;
 import github.exia1771.deploy.core.service.docker.ContainerService;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -25,8 +26,8 @@ import java.util.Map;
 @Service
 public class MavenDockerJenkins extends AbstractJenkinsService {
 
-	public MavenDockerJenkins(JenkinsServer server, ProjectService projectService, ProjectConfigService projectConfigService, ImageTemplateService imageTemplateService, ContainerService containerService) {
-		super(server, projectService, projectConfigService, imageTemplateService, containerService);
+	public MavenDockerJenkins(JenkinsServer server, ProjectService projectService, ProjectConfigService projectConfigService, ImageTemplateService imageTemplateService, ContainerService containerService, RedisTemplate<String, Object> redisTemplate) {
+		super(server, projectService, projectConfigService, imageTemplateService, containerService, redisTemplate);
 	}
 
 	@Override
@@ -38,6 +39,8 @@ public class MavenDockerJenkins extends AbstractJenkinsService {
 	public String getBuildType() {
 		return "maven";
 	}
+
+	private static final String TAG_SUFFIX = "Jenkins";
 
 	@Override
 	protected Map<String, Object> getVariables(ProjectContainer projectContainer) {
@@ -51,18 +54,41 @@ public class MavenDockerJenkins extends AbstractJenkinsService {
 		}
 		map.put("targets", buildCommand);
 		String dockerShellCommand = getDockerShellCommand(projectContainer, project);
-		String otherDockerShellCommand = getOtherDockerShellCommand(projectContainer);
-		String runShellCommand = getRunShellCommand(projectContainer);
-		map.put("shell", dockerShellCommand + otherDockerShellCommand + runShellCommand);
+		map.put("shell", dockerShellCommand);
 		return map;
+	}
+
+	private String buildImage(ProjectContainer projectContainer, ImageTemplate imageTemplate) {
+		StringBuilder builder = new StringBuilder();
+
+		String[] split = projectContainer.getCpToContainerPath().split("\\s+");
+		String hostFile = split[0];
+		String containerFile = split[1];
+
+		builder.append("docker build --build-arg image=")
+				.append(imageTemplate.getDockerImageId())
+				.append(" --build-arg from=")
+				.append(hostFile)
+				.append(" --build-arg to=")
+				.append(containerFile)
+				.append(" --build-arg command='")
+				.append(projectContainer.getRunCommand())
+				.append("' -f ../DockerFiles/maven/DockerFile -t ")
+				.append(projectContainer.getDockerContainerId())
+				.append(":")
+				.append(TAG_SUFFIX)
+				.append(" . ");
+
+		return builder.append(System.lineSeparator()).toString();
 	}
 
 	private String getDockerShellCommand(ProjectContainer projectContainer, Project project) {
 		ProjectConfigDTO config = projectConfigService.findByProjectIdAndNamespaceId(projectContainer.getProjectId(), projectContainer.getNamespaceId());
 		ImageTemplate imageTemplate = imageTemplateService.findById(project.getTemplateId());
+
 		StringBuilder builder = new StringBuilder();
-		builder.append("cd ./target")
-				.append(System.lineSeparator());
+
+		builder.append(buildImage(projectContainer, imageTemplate));
 
 		ifExistedContainerStop(projectContainer, builder);
 
@@ -98,19 +124,6 @@ public class MavenDockerJenkins extends AbstractJenkinsService {
 		return builder.append(System.lineSeparator()).toString();
 	}
 
-	private String getOtherDockerShellCommand(ProjectContainer projectContainer) {
-		StringBuilder builder = new StringBuilder();
-		if (StringUtil.isNotBlank(projectContainer.getCpToContainerPath())) {
-			String[] split = projectContainer.getCpToContainerPath().split("\\s+");
-			builder.append("docker cp ")
-					.append(split[0])
-					.append(" ")
-					.append(projectContainer.getDockerContainerId())
-					.append(":")
-					.append(split[1]);
-		}
-		return builder.append(System.lineSeparator()).toString();
-	}
 
 	private void ifExistedContainerStop(ProjectContainer projectContainer, StringBuilder builder) {
 		StringBuilder filters = new StringBuilder();
@@ -127,11 +140,19 @@ public class MavenDockerJenkins extends AbstractJenkinsService {
 				List<String> names = temp.getJSONArray("names").toJavaList(String.class);
 				for (String name : names) {
 					if (name.contains(projectContainer.getDockerContainerId())) {
+						// 停止容器
 						builder.append(" docker stop ")
 								.append(projectContainer.getDockerContainerId())
 								.append(System.lineSeparator())
+								// 删除容器
 								.append(" docker rm ")
 								.append(projectContainer.getDockerContainerId())
+								.append(System.lineSeparator())
+								// 删除镜像
+								.append(" docker rmi ")
+								.append(projectContainer.getDockerContainerId())
+								.append(":")
+								.append(TAG_SUFFIX)
 								.append(System.lineSeparator());
 						break;
 					}
@@ -140,15 +161,4 @@ public class MavenDockerJenkins extends AbstractJenkinsService {
 		}
 	}
 
-	private String getRunShellCommand(ProjectContainer projectContainer) {
-		StringBuilder builder = new StringBuilder();
-		if (StringUtil.isNotBlank(projectContainer.getRunCommand())) {
-			builder.append("docker exec -it ")
-					.append(projectContainer.getDockerContainerId())
-					.append(" ")
-					.append(projectContainer.getRunCommand())
-					.append(System.lineSeparator());
-		}
-		return builder.toString();
-	}
 }

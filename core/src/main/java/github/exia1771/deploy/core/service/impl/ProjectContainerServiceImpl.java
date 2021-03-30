@@ -25,6 +25,7 @@ import github.exia1771.deploy.core.mapper.ProjectContainerMapper;
 import github.exia1771.deploy.core.service.BuildTypeService;
 import github.exia1771.deploy.core.service.ProjectContainerService;
 import github.exia1771.deploy.core.service.ProjectService;
+import github.exia1771.deploy.core.service.docker.ContainerService;
 import github.exia1771.deploy.core.service.jenkins.JenkinsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,7 @@ public class ProjectContainerServiceImpl extends BaseServiceImpl<String, Project
 	private static final String TAG_COLUMN = "git_tag";
 	private static final String PUB_DATE_COLUMN = "pub_date";
 	private static final String PUBLISHER_COLUMN = "publisher";
+	private static final String ID_COLUMN = "id";
 	private static final String NAMESPACE_COLUMN = "namespace_id";
 	private static final String PROJECT_ID_COLUMN = "project_id";
 
@@ -63,6 +65,9 @@ public class ProjectContainerServiceImpl extends BaseServiceImpl<String, Project
 
 	@Autowired
 	private ExecutorService fixedThreadPool;
+
+	@Autowired
+	private ContainerService containerService;
 
 	@Autowired
 	private RestTemplate restTemplate;
@@ -138,7 +143,8 @@ public class ProjectContainerServiceImpl extends BaseServiceImpl<String, Project
 		Validators.requireLength("名称空间", projectContainer.getNamespaceId(), 1, 255, true);
 		Validators.requireLength("GitTag", projectContainer.getGitTag(), 1, 255, true);
 		Validators.requireLength("工程构建命令", projectContainer.getNamespaceId(), 1, 65535, true);
-		Validators.requireLength("拷贝至容器目录", projectContainer.getCpToContainerPath(), 0, 65535, false);
+		Validators.requireLength("工程运行命令", projectContainer.getRunCommand(), 1, 65535, true);
+		Validators.requireLength("拷贝至容器目录", projectContainer.getCpToContainerPath(), 1, 255, false);
 	}
 
 	@Override
@@ -159,7 +165,7 @@ public class ProjectContainerServiceImpl extends BaseServiceImpl<String, Project
 				log.error("阻塞队列put异常=>", e);
 				throw new ServiceException("出现错误，请稍后再试");
 			}
-			this.runBuild();
+			fixedThreadPool.execute(this::runBuild);
 		}
 	}
 
@@ -180,6 +186,7 @@ public class ProjectContainerServiceImpl extends BaseServiceImpl<String, Project
 			}
 			BoundSetOperations<String, Object> setOps = redisTemplate.boundSetOps("build");
 			setOps.remove(projectContainer.getProjectId());
+			mapper.updateById(projectContainer);
 		} catch (InterruptedException e) {
 			log.error("阻塞队列获取实例异常", e);
 		}
@@ -208,8 +215,62 @@ public class ProjectContainerServiceImpl extends BaseServiceImpl<String, Project
 		if (StringUtil.isNotBlank(search.getPubEndDate())) {
 			wrapper.lt(PUB_DATE_COLUMN, search.getPubEndDate());
 		}
+		wrapper.orderByDesc(PUB_DATE_COLUMN);
 		Page<ProjectContainer> page = new Page<>(search.getCurrent(), search.getSize());
 		return pageAll(page, wrapper).convert(ProjectContainer::toDTO);
+	}
+
+	@Override
+	public String stopBuild(String projectContainerId) {
+		ProjectContainer container = findById(projectContainerId);
+		BuildType buildType = buildTypeService.findById(container.getBuildTypeId());
+		BoundSetOperations<String, Object> abort = redisTemplate.boundSetOps("abort");
+		String result = "";
+		for (JenkinsService jenkinsService : jenkinsServices) {
+			if (jenkinsService.getBuildType().equals(buildType.getName())) {
+				try {
+					abort.add(projectContainerId);
+					result = jenkinsService.stop(container.getJenkinsJobName(), container.getJenkinsBuildNumber());
+				} catch (IOException e) {
+					container.setStatus(ProjectContainer.Status.ABORT_ERROR.getValue());
+					Boolean member = abort.isMember(projectContainerId);
+					if (member != null && member) {
+						abort.remove(projectContainerId);
+					}
+					log.error("{}.{}终止构建失败=>{}", container.getJenkinsJobName(), container.getJenkinsBuildNumber(), e.getMessage());
+				}
+				break;
+			}
+		}
+		if (container.getStatus() == ProjectContainer.Status.ABORT_ERROR.getValue()) {
+			mapper.updateById(container);
+			throw new ServiceException("终止失败");
+		}
+		return result;
+	}
+
+	@Override
+	public String getContainerLog(String projectContainerId, long timestamp) {
+		ProjectContainer projectContainer = findById(projectContainerId);
+		try {
+			return containerService.getContainerLogs(projectContainer.getDockerContainerId(), timestamp);
+		} catch (IOException e) {
+			log.error("获取容器{}日志失败=>", projectContainer.getDockerContainerId(), e);
+		}
+		return "";
+	}
+
+	@Override
+	public ContainerService.Status restartContainer(String projectContainerId) {
+		BoundSetOperations<String, Object> setOps = redisTemplate.boundSetOps("restart");
+		Boolean isRestarted = setOps.isMember(projectContainerId);
+		if (isRestarted != null && isRestarted) {
+			throw new ServiceException("当前容器正在重启，请勿重复点击");
+		} else {
+			setOps.add(projectContainerId);
+		}
+		ProjectContainer container = findById(projectContainerId);
+		return containerService.restart(container.getDockerContainerId());
 	}
 
 	@Override
@@ -221,5 +282,4 @@ public class ProjectContainerServiceImpl extends BaseServiceImpl<String, Project
 	public Role getRole() {
 		return roleService.findById(getCurrentUser().getRoleId());
 	}
-
 }

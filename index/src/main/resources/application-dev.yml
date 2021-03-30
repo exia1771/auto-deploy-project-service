@@ -30,3 +30,7 @@ jenkins-client:
 deploy:
   docker:
     server-address: http://${spring.redis.host}:2375/
+
+logging:
+  level:
+    github.exia1771.deploy.core.service.jenkins.AbstractJenkinsService: debug
