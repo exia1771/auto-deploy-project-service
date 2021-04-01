@@ -15,27 +15,27 @@ import javax.validation.constraints.Size;
 @EqualsAndHashCode(callSuper = true)
 public class ImageTemplate extends AbstractEntity<String> implements Pageable {
 
-    @NotNull
-    @NotBlank
-    @Size(min = 6, max = 255)
-    private String templateName;
+	@NotNull
+	@NotBlank
+	@Size(min = 6, max = 255)
+	private String templateName;
 
-    @NotNull
-    @NotBlank
-    @Size(min = 6, max = 255)
-    private String templateTag;
+	@NotNull
+	@NotBlank
+	@Size(min = 6, max = 255)
+	private String templateTag;
 
-    @NotNull
-    @NotBlank
-    @Size(min = 6, max = 255)
-    private String dockerImageId;
-    private transient Long current;
-    private transient Long size;
+	@NotNull
+	@NotBlank
+	@Size(min = 6, max = 255)
+	private String dockerImageId;
+	private transient Long current;
+	private transient Long size;
 
-    @Override
-    public ImageTemplateDTO toDTO() {
-        ImageTemplateDTO imageTemplateDTO = new ImageTemplateDTO();
-        BeanUtils.copyProperties(this, imageTemplateDTO);
-        return imageTemplateDTO;
-    }
+	@Override
+	public ImageTemplateDTO toDTO() {
+		ImageTemplateDTO imageTemplateDTO = new ImageTemplateDTO();
+		BeanUtils.copyProperties(this, imageTemplateDTO);
+		return imageTemplateDTO;
+	}
 }

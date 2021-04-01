@@ -12,17 +12,17 @@ import javax.sql.DataSource;
 @Configuration
 public class MyBatisPlusConfiguration {
 
-    @Bean
-    public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
-        MybatisSqlSessionFactoryBean bean = new MybatisSqlSessionFactoryBean();
-        bean.setDataSource(dataSource);
+	@Bean
+	public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
+		MybatisSqlSessionFactoryBean bean = new MybatisSqlSessionFactoryBean();
+		bean.setDataSource(dataSource);
 
-        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+		MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+		interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
 
-        bean.setPlugins(interceptor);
+		bean.setPlugins(interceptor);
 
-        return bean.getObject();
-    }
+		return bean.getObject();
+	}
 
 }

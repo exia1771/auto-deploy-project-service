@@ -7,11 +7,12 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class UserDTO extends AbstractDTO<String> {
 
-    private RoleDTO role;
+	private RoleDTO role;
+	private String roleId;
 	private String deptId;
 	private String username;
-    private String avatarAddress;
-    private String email;
-    private String telephone;
+	private String avatarAddress;
+	private String email;
+	private String telephone;
 
 }

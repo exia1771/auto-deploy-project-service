@@ -6,12 +6,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication(scanBasePackages = "github.exia1771.deploy")
 @MapperScan(value = {
-        "github.exia1771.deploy.*.mapper",
+		"github.exia1771.deploy.*.mapper",
 })
 public class IndexApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(IndexApplication.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(IndexApplication.class, args);
+	}
 
 }

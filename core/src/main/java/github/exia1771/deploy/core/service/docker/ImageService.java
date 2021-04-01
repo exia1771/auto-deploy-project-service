@@ -8,6 +8,6 @@ import java.util.List;
 public interface ImageService extends RemoteApi<Image, DockerRemoteApiParam> {
 
 
-    List<Image> findByTag(String tag);
+	List<Image> findByTag(String tag);
 
 }

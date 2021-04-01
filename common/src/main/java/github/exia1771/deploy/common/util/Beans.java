@@ -7,10 +7,10 @@ import java.util.Map;
 
 public abstract class Beans {
 
-    @SuppressWarnings("unchecked")
-    public static Map<String, Object> toMap(Object bean, SerializerFeature... features) {
-        String jsonString = JSONObject.toJSONString(bean, features);
-        return JSONObject.parseObject(jsonString, Map.class);
-    }
+	@SuppressWarnings("unchecked")
+	public static Map<String, Object> toMap(Object bean, SerializerFeature... features) {
+		String jsonString = JSONObject.toJSONString(bean, features);
+		return JSONObject.parseObject(jsonString, Map.class);
+	}
 
 }

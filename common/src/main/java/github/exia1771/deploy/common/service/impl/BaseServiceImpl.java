@@ -58,7 +58,7 @@ public abstract class BaseServiceImpl<K extends Serializable, T extends Abstract
 	}
 
 	public Users.SimpleUser getCurrentUser() {
-		return null;
+		return Users.getSimpleUser();
 	}
 
 	@Override
@@ -89,14 +89,14 @@ public abstract class BaseServiceImpl<K extends Serializable, T extends Abstract
 		return t;
 	}
 
-	protected void beforeDelete() {
+	protected void beforeDelete(K id) {
 	}
 
 
 	@Override
 	public Boolean deleteById(K id) {
 		validateDeletePri(id);
-		beforeDelete();
+		beforeDelete(id);
 		int rows = mapper.deleteById(id);
 		return rows != 0;
 	}
@@ -108,7 +108,6 @@ public abstract class BaseServiceImpl<K extends Serializable, T extends Abstract
 	@Override
 	public int batchDeleteByIdList(List<K> idList) {
 		validateBatchDeletePri(idList);
-		beforeDelete();
 		return mapper.deleteBatchIds(idList);
 	}
 

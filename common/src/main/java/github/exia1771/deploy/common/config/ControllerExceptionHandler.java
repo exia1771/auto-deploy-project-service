@@ -16,22 +16,22 @@ import javax.validation.ValidationException;
 @RestControllerAdvice
 public class ControllerExceptionHandler {
 
-    @ExceptionHandler(ServiceException.class)
-    public ResponseEntity<ResponseBody> serviceExceptionHandler(ServiceException e,
-                                                                HttpServletRequest request) throws Exception {
-        return CommonResponse.of(null, HttpStatus.BAD_REQUEST, e.getMessage());
-    }
+	@ExceptionHandler(ServiceException.class)
+	public ResponseEntity<ResponseBody> serviceExceptionHandler(ServiceException e,
+																HttpServletRequest request) throws Exception {
+		return CommonResponse.of(null, HttpStatus.BAD_REQUEST, e.getMessage());
+	}
 
-    @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<ResponseBody> validationExceptionHandler(ValidationException e,
-                                                                   HttpServletRequest request) throws Exception {
-        return CommonResponse.of(null, HttpStatus.FORBIDDEN, e.getMessage());
-    }
+	@ExceptionHandler(ValidationException.class)
+	public ResponseEntity<ResponseBody> validationExceptionHandler(ValidationException e,
+																   HttpServletRequest request) throws Exception {
+		return CommonResponse.of(null, HttpStatus.FORBIDDEN, e.getMessage());
+	}
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ResponseBody> exceptionHandler(Exception e,
-                                                         HttpServletRequest request) throws Exception {
-        e.printStackTrace();
-        return CommonResponse.of(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-    }
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<ResponseBody> exceptionHandler(Exception e,
+														 HttpServletRequest request) throws Exception {
+		e.printStackTrace();
+		return CommonResponse.of(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+	}
 }

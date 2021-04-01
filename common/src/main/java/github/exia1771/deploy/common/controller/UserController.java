@@ -17,42 +17,42 @@ import java.io.UnsupportedEncodingException;
 @RequestMapping("/user")
 public class UserController {
 
-    private final UserService userService;
+	private final UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+	public UserController(UserService userService) {
+		this.userService = userService;
+	}
 
-    @GetMapping("/public/check")
-    public ResponseEntity<ResponseBody> isExistedName(@RequestParam("name") String name) {
-        return CommonResponse.success(userService.isExistedName(name));
-    }
+	@GetMapping("/public/check")
+	public ResponseEntity<ResponseBody> isExistedName(@RequestParam("name") String name) {
+		return CommonResponse.success(userService.isExistedName(name));
+	}
 
-    @PostMapping("/public/submit")
-    public ResponseEntity<ResponseBody> submit(@RequestBody @Valid User user) throws UnsupportedEncodingException {
-        return CommonResponse.success(userService.submit(user));
-    }
+	@PostMapping("/public/submit")
+	public ResponseEntity<ResponseBody> submit(@RequestBody @Valid User user) throws UnsupportedEncodingException {
+		return CommonResponse.success(userService.submit(user));
+	}
 
-    @PostMapping("/public/login")
-    public ResponseEntity<ResponseBody> login(@RequestBody User user) throws UnsupportedEncodingException {
-        return CommonResponse.success(userService.login(user));
-    }
+	@PostMapping("/public/login")
+	public ResponseEntity<ResponseBody> login(@RequestBody User user) throws UnsupportedEncodingException {
+		return CommonResponse.success(userService.login(user));
+	}
 
-    @GetMapping("/logout")
-    public ResponseEntity<ResponseBody> logout() {
-        userService.logout();
-        return CommonResponse.success();
-    }
+	@GetMapping("/logout")
+	public ResponseEntity<ResponseBody> logout() {
+		userService.logout();
+		return CommonResponse.success();
+	}
 
-    @GetMapping("/login")
-    public ResponseEntity<ResponseBody> login() {
-        return CommonResponse.success(userService.login());
-    }
+	@GetMapping("/login")
+	public ResponseEntity<ResponseBody> login() {
+		return CommonResponse.success(userService.login());
+	}
 
-    @PutMapping("/update")
-    public ResponseEntity<ResponseBody> updateBasicInfo(@RequestBody User user) {
-        return CommonResponse.success(userService.updateBasicInfo(user));
-    }
+	@PutMapping("/update")
+	public ResponseEntity<ResponseBody> updateBasicInfo(@RequestBody User user) {
+		return CommonResponse.success(userService.updateBasicInfo(user));
+	}
 
 	@PostMapping("/avatar")
 	public ResponseEntity<ResponseBody> uploadAvatar(@RequestParam("avatar") MultipartFile file) {

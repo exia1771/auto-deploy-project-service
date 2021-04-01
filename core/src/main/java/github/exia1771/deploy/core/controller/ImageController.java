@@ -12,21 +12,21 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/image")
 public class ImageController {
 
-    @Autowired
-    private ImageService service;
+	@Autowired
+	private ImageService service;
 
-    @PostMapping("/find")
-    public ResponseEntity<ResponseBody> find(@RequestBody DockerRemoteApiParam param) {
-        return CommonResponse.success(service.findByParam(param));
-    }
+	@PostMapping("/find")
+	public ResponseEntity<ResponseBody> find(@RequestBody DockerRemoteApiParam param) {
+		return CommonResponse.success(service.findByParam(param));
+	}
 
-    @GetMapping("/inspect/{id}")
-    public ResponseEntity<ResponseBody> inspect(@PathVariable("id") String id) {
-        return CommonResponse.success(service.inspect(id));
-    }
+	@GetMapping("/inspect/{id}")
+	public ResponseEntity<ResponseBody> inspect(@PathVariable("id") String id) {
+		return CommonResponse.success(service.inspect(id));
+	}
 
-    @GetMapping("/find")
-    public ResponseEntity<ResponseBody> findByTag(@RequestParam("tag") String tag) {
-        return CommonResponse.success(service.findByTag(tag));
-    }
+	@GetMapping("/find")
+	public ResponseEntity<ResponseBody> findByTag(@RequestParam("tag") String tag) {
+		return CommonResponse.success(service.findByTag(tag));
+	}
 }

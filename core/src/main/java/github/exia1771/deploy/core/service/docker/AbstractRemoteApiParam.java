@@ -9,11 +9,11 @@ import java.util.Set;
 public abstract class AbstractRemoteApiParam {
 
 
-    public static final Set<String> EXCLUDED_FIELDS = new HashSet<>();
+	public static final Set<String> EXCLUDED_FIELDS = new HashSet<>();
 
-    static {
+	static {
 		EXCLUDED_FIELDS.add("filters");
-    }
+	}
 
 	private Integer limit;
 	private String filters;

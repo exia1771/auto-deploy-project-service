@@ -8,12 +8,12 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class ProjectDTO extends AbstractDTO<String> {
 
-    private String username;
-    private String templateId;
+	private String username;
+	private String templateId;
 	private String configId;
 	private String name;
-    private String description;
-    private String identification;
-    private String gitUrl;
+	private String description;
+	private String identification;
+	private String gitUrl;
 
 }

@@ -9,13 +9,13 @@ import java.util.List;
 
 public interface ImageTemplateService extends BaseService<String, ImageTemplate> {
 
-    Page<ImageTemplate> pageByName(ImageTemplate template);
+	Page<ImageTemplate> pageByName(ImageTemplate template);
 
-    List<String> findDistinctTemplateName();
+	List<String> findDistinctTemplateName();
 
-    List<String> findTemplateNameByKeyword(String keyword);
+	List<String> findTemplateNameByKeyword(String keyword);
 
-    List<ImageTemplateDTO> findTagsByTemplateName(String templateName);
+	List<ImageTemplateDTO> findTagsByTemplateName(String templateName);
 
-    ImageTemplate findIdByTemplateNameAndTag(ImageTemplate template);
+	ImageTemplate findIdByTemplateNameAndTag(ImageTemplate template);
 }

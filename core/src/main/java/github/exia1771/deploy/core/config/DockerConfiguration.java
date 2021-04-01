@@ -14,32 +14,32 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class DockerConfiguration {
 
-    private final DockerProperties properties;
+	private final DockerProperties properties;
 	private static final RestTemplate TEMPLATE = new RestTemplate();
 
-    public DockerConfiguration(DockerProperties properties) {
-        this.properties = properties;
-        testConnection();
-    }
+	public DockerConfiguration(DockerProperties properties) {
+		this.properties = properties;
+		testConnection();
+	}
 
-    public void testConnection() {
-        final String version = "/version";
-        new Thread(() -> {
-            while (true) {
-                try {
+	public void testConnection() {
+		final String version = "/version";
+		new Thread(() -> {
+			while (true) {
+				try {
 					TEMPLATE.getForObject(properties.getServerAddress() + version, JSONObject.class);
-                    break;
-                } catch (ResourceAccessException e) {
-                    log.error("Docker Remote Api 无法正确连接");
-                }
-            }
-        }).start();
-    }
+					break;
+				} catch (ResourceAccessException e) {
+					log.error("Docker Remote Api 无法正确连接");
+				}
+			}
+		}).start();
+	}
 
-    @Bean
-    public RestTemplate restTemplate() {
+	@Bean
+	public RestTemplate restTemplate() {
 		return TEMPLATE;
-    }
+	}
 
 }
 

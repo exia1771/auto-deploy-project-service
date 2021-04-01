@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class DockerRemoteApiParam extends AbstractRemoteApiParam {
 
-    private String id;
-    private String name;
+	private String id;
+	private String name;
 
 }

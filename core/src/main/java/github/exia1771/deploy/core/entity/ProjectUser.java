@@ -10,13 +10,13 @@ import org.springframework.beans.BeanUtils;
 @EqualsAndHashCode(callSuper = true)
 public class ProjectUser extends AbstractEntity<String> {
 
-    private String projectId;
-    private String userId;
+	private String projectId;
+	private String userId;
 
-    @Override
-    public ProjectUserDTO toDTO() {
-        ProjectUserDTO projectUserDTO = new ProjectUserDTO();
-        BeanUtils.copyProperties(this, projectUserDTO);
-        return projectUserDTO;
-    }
+	@Override
+	public ProjectUserDTO toDTO() {
+		ProjectUserDTO projectUserDTO = new ProjectUserDTO();
+		BeanUtils.copyProperties(this, projectUserDTO);
+		return projectUserDTO;
+	}
 }

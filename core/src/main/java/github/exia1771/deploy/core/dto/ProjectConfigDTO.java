@@ -8,9 +8,9 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class ProjectConfigDTO extends AbstractDTO<String> {
 
-    private String namespace;
-    private long memory;
-    private long core;
-    private String port;
+	private String namespace;
+	private long memory;
+	private long core;
+	private String port;
 
 }

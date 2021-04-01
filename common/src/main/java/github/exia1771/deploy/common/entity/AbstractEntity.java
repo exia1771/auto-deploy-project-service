@@ -9,15 +9,15 @@ import java.util.Date;
 @Data
 public abstract class AbstractEntity<T extends Serializable> {
 
-    private T id;
-    private String creatorId;
-    private Date creationTime;
-    private String updaterId;
-    private Date updateTime;
+	private T id;
+	private String creatorId;
+	private Date creationTime;
+	private String updaterId;
+	private Date updateTime;
 
-    public AbstractEntity() {
-    }
+	public AbstractEntity() {
+	}
 
-    public abstract AbstractDTO<T> toDTO();
+	public abstract AbstractDTO<T> toDTO();
 
 }

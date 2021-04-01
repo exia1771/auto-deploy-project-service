@@ -5,9 +5,9 @@ import lombok.Data;
 @Data
 public class Port {
 
-    private String ip;
-    private String privatePort;
-    private String publicPort;
-    private String type;
+	private String ip;
+	private String privatePort;
+	private String publicPort;
+	private String type;
 
 }

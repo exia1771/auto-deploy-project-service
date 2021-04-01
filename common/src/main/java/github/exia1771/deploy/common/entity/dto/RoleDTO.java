@@ -7,10 +7,10 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class RoleDTO extends AbstractDTO<String> {
 
-    private String name;
-    private Boolean createPri;
-    private Boolean deletePri;
-    private Boolean publishPri;
-    private Boolean updatePri;
+	private String name;
+	private Boolean createPri;
+	private Boolean deletePri;
+	private Boolean publishPri;
+	private Boolean updatePri;
 
 }

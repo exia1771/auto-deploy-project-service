@@ -11,15 +11,15 @@ import java.util.List;
 
 public interface UserService extends BaseService<String, User> {
 
-    Boolean isExistedName(String name);
+	Boolean isExistedName(String name);
 
-    UserDTO submit(User user) throws UnsupportedEncodingException;
+	UserDTO submit(User user) throws UnsupportedEncodingException;
 
-    UserDTO login(User user) throws UnsupportedEncodingException;
+	UserDTO login(User user) throws UnsupportedEncodingException;
 
-    UserDTO login();
+	UserDTO login();
 
-    void logout();
+	void logout();
 
 	User findByName(String name);
 
@@ -32,4 +32,8 @@ public interface UserService extends BaseService<String, User> {
 	void changePassword(Password password);
 
 	List<UserDTO> findByDeptId(String id);
+
+	List<UserDTO> findByNotHaveDeptId();
+
+	void batchUpdateDeptId(String deptId, List<String> userId);
 }

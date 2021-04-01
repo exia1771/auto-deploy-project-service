@@ -11,21 +11,21 @@ import org.springframework.beans.BeanUtils;
 @EqualsAndHashCode(callSuper = true)
 public class Project extends AbstractEntity<String> implements Pageable {
 
-    private String username;
-    private String templateId;
+	private String username;
+	private String templateId;
 	private String name;
-    private String description;
-    private String identification;
-    private String gitUrl;
+	private String description;
+	private String identification;
+	private String gitUrl;
 //    private int state;
 
-    private transient Long current;
-    private transient Long size;
+	private transient Long current;
+	private transient Long size;
 
-    @Override
-    public ProjectDTO toDTO() {
-        ProjectDTO projectDTO = new ProjectDTO();
-        BeanUtils.copyProperties(this, projectDTO);
-        return projectDTO;
-    }
+	@Override
+	public ProjectDTO toDTO() {
+		ProjectDTO projectDTO = new ProjectDTO();
+		BeanUtils.copyProperties(this, projectDTO);
+		return projectDTO;
+	}
 }

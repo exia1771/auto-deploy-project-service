@@ -16,6 +16,7 @@ import github.exia1771.deploy.common.service.UserService;
 import github.exia1771.deploy.common.util.Commons;
 import github.exia1771.deploy.common.util.Tokens;
 import github.exia1771.deploy.common.util.Users;
+import github.exia1771.deploy.common.util.Validators;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +42,7 @@ public class UserServiceImpl extends BaseServiceImpl<String, User> implements Us
 	private static final String PASSWORD_NOT_CORRECT = "密码错误!";
 	private static final Long DEFAULT_ROLE_ID = 1L;
 	private static final String DEPT_ID_COLUMN = "dept_id";
+	private static final String ID_COLUMN = "id";
 
 	@Autowired
 	private FileService fileService;
@@ -65,13 +68,15 @@ public class UserServiceImpl extends BaseServiceImpl<String, User> implements Us
 	}
 
 	@Override
-	protected void beforeInsert(User user) {
+	protected void beforeSave(User user) {
 		if (isExistedName(user.getUsername())) {
 			throw new ServiceException(USER_NAME_EXISTED);
 		}
+	}
+
+	@Override
+	protected void beforeInsert(User user) {
 		user.setId(Commons.getId());
-		user.setCreatorId(user.getId());
-		user.setUpdaterId(user.getId());
 		user.setRoleId(DEFAULT_ROLE_ID.toString());
 	}
 
@@ -95,7 +100,7 @@ public class UserServiceImpl extends BaseServiceImpl<String, User> implements Us
 	@Override
 	public void logout() {
 		Users.SimpleUser user = Users.getSimpleUser();
-		Users.discardUserToken(user.getUserId().toString());
+		Users.discardUserToken(user.getUserId());
 	}
 
 	@Override
@@ -232,5 +237,58 @@ public class UserServiceImpl extends BaseServiceImpl<String, User> implements Us
 		wrapper.eq(DEPT_ID_COLUMN, id);
 		List<User> users = mapper.selectList(wrapper);
 		return users.stream().map(User::toDTO).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<UserDTO> findByNotHaveDeptId() {
+		QueryWrapper<User> wrapper = new QueryWrapper<>();
+		wrapper.eq(DEPT_ID_COLUMN, "");
+		wrapper.or(q -> q.eq(DEPT_ID_COLUMN, null));
+		List<User> users = mapper.selectList(wrapper);
+		return users.stream().map(User::toDTO).collect(Collectors.toList());
+	}
+
+	@Override
+	public void batchUpdateDeptId(String deptId, List<String> userId) {
+		Validators.requireLength("部门ID", deptId, 1, 255, true);
+		for (String s : userId) {
+			Validators.requireLength("用户ID", s, 1, 255, true);
+		}
+
+		QueryWrapper<User> wrapper = new QueryWrapper<>();
+		wrapper.in(ID_COLUMN, userId);
+		List<User> users = mapper.selectList(wrapper);
+
+		if (users.size() < userId.size()) {
+			throw new ServiceException("指定的用户ID个别不存在");
+		}
+
+
+		List<UserDTO> originUser = findByDeptId(deptId);
+		Map<String, User> map = new HashMap<>();
+
+		// 老部门员工的部门ID全部置为null
+		for (UserDTO userDTO : originUser) {
+			User temp = new User();
+			temp.setId(userDTO.getId());
+			temp.setDeptId(null);
+			map.put(userDTO.getId(), temp);
+		}
+
+		// 根据传入的用户ID查找出的部门ID全部置为deptId，map的Key就是需要更新的列表
+		// count 计数 以免不必要的更新
+		int count = 0;
+		for (User user : users) {
+			user.setDeptId(deptId);
+			if (map.containsKey(user.getId())) {
+				count++;
+			}
+			map.put(user.getId(), user);
+		}
+
+		if (count == originUser.size()) {
+			return;
+		}
+		mapper.batchUpdateDeptId(new ArrayList<>(map.values()));
 	}
 }

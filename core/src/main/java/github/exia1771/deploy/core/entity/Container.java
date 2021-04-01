@@ -10,13 +10,13 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class Container extends AbstractWebEntity {
 
-    private String id;
-    private List<String> names;
-    private String image;
-    private String imageId;
-    private List<Port> ports;
-    private String state;
-    private String status;
+	private String id;
+	private List<String> names;
+	private String image;
+	private String imageId;
+	private List<Port> ports;
+	private String state;
+	private String status;
 
 
 }

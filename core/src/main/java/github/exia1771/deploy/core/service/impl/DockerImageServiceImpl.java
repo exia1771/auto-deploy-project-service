@@ -16,58 +16,58 @@ import java.util.stream.Collectors;
 @Service("docker")
 public class DockerImageServiceImpl extends DockerContainerEngine implements ImageService {
 
-    private static final String IMAGE_PREFIX = "images/json?";
+	private static final String IMAGE_PREFIX = "images/json?";
 
 
-    public DockerImageServiceImpl(DockerProperties properties, RestTemplate restTemplate) {
-        super(properties, restTemplate);
-    }
+	public DockerImageServiceImpl(DockerProperties properties, RestTemplate restTemplate) {
+		super(properties, restTemplate);
+	}
 
 
-    @Override
-    public String getURL() {
-        return getServerAddress() + IMAGE_PREFIX;
-    }
+	@Override
+	public String getURL() {
+		return getServerAddress() + IMAGE_PREFIX;
+	}
 
-    @Override
-    public List<Image> findByParam(DockerRemoteApiParam param) {
-        String url = getRequestURL(param);
-        return getRestTemplate().getForObject(url, JSONArray.class).toJavaList(Image.class);
-    }
+	@Override
+	public List<Image> findByParam(DockerRemoteApiParam param) {
+		String url = getRequestURL(param);
+		return getRestTemplate().getForObject(url, JSONArray.class).toJavaList(Image.class);
+	}
 
-    @Override
-    public List<Image> findByParam(Object param, String url) {
-        return getRestTemplate().getForObject(url, JSONArray.class, param).toJavaList(Image.class);
-    }
+	@Override
+	public List<Image> findByParam(Object param, String url) {
+		return getRestTemplate().getForObject(url, JSONArray.class, param).toJavaList(Image.class);
+	}
 
-    @Override
-    public JSONObject inspect(String id) {
-        JSONObject result;
-        try {
-            result = getRestTemplate().getForObject(getServerAddress() + "images" + "/" + id + "/json", JSONObject.class);
-        } catch (HttpClientErrorException.NotFound e) {
-            result = null;
-        }
-        return result;
-    }
+	@Override
+	public JSONObject inspect(String id) {
+		JSONObject result;
+		try {
+			result = getRestTemplate().getForObject(getServerAddress() + "images" + "/" + id + "/json", JSONObject.class);
+		} catch (HttpClientErrorException.NotFound e) {
+			result = null;
+		}
+		return result;
+	}
 
 
-    @Override
-    public List<Image> findByTag(String tag) {
-        String url = getURL();
-        List<Image> imageList = getRestTemplate().getForObject(url, JSONArray.class).toJavaList(Image.class);
-        return imageList.stream().filter(image -> {
-            List<String> repoTags = image.getRepoTags();
-            boolean result = false;
+	@Override
+	public List<Image> findByTag(String tag) {
+		String url = getURL();
+		List<Image> imageList = getRestTemplate().getForObject(url, JSONArray.class).toJavaList(Image.class);
+		return imageList.stream().filter(image -> {
+			List<String> repoTags = image.getRepoTags();
+			boolean result = false;
 
-            for (String repoTag : repoTags) {
-                if (repoTag.contains(tag)) {
-                    result = true;
-                    break;
-                }
-            }
+			for (String repoTag : repoTags) {
+				if (repoTag.contains(tag)) {
+					result = true;
+					break;
+				}
+			}
 
-            return result;
-        }).collect(Collectors.toList());
-    }
+			return result;
+		}).collect(Collectors.toList());
+	}
 }

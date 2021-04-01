@@ -11,19 +11,19 @@ import java.util.Map;
 
 public interface BaseService<K extends Serializable, T extends AbstractEntity<K>> {
 
-    T save(T t);
+	T save(T t);
 
-    T findById(K id);
+	T findById(K id);
 
-    Boolean deleteById(K id);
+	Boolean deleteById(K id);
 
-    int batchDeleteByIdList(List<K> idList);
+	int batchDeleteByIdList(List<K> idList);
 
-    List<T> findAll();
+	List<T> findAll();
 
-    IPage<T> pageAll(Page<T> page);
+	IPage<T> pageAll(Page<T> page);
 
-    IPage<T> pageAll(Page<T> page, QueryWrapper<T> wrapper);
+	IPage<T> pageAll(Page<T> page, QueryWrapper<T> wrapper);
 
-    Boolean isExisted(Map<String, Object> params);
+	Boolean isExisted(Map<String, Object> params);
 }

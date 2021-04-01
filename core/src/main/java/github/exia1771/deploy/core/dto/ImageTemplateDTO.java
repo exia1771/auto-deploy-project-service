@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class ImageTemplateDTO extends AbstractDTO<String> {
 
-    private String templateName;
-    private String templateTag;
+	private String templateName;
+	private String templateTag;
 
 }

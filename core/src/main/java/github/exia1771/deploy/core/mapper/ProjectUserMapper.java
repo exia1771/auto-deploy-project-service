@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ProjectUserMapper extends BaseMapper<ProjectUser> {
 
-    int batchAddProjectMember(@Param("list") List<ProjectUser> projectUserList);
+	int batchAddProjectMember(@Param("list") List<ProjectUser> projectUserList);
 
-    int batchRemoveProjectMember(@Param("list") List<ProjectUser> projectUsers);
+	int batchRemoveProjectMember(@Param("list") List<ProjectUser> projectUsers);
 }

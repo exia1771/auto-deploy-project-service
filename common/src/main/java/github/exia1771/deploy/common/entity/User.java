@@ -31,15 +31,15 @@ public class User extends AbstractEntity<String> {
 
 	private String email;
 
-    private String telephone;
+	private String telephone;
 
-    public User() {
-    }
+	public User() {
+	}
 
-    @Override
-    public UserDTO toDTO() {
-        UserDTO target = new UserDTO();
-        BeanUtils.copyProperties(this, target);
-        return target;
-    }
+	@Override
+	public UserDTO toDTO() {
+		UserDTO target = new UserDTO();
+		BeanUtils.copyProperties(this, target);
+		return target;
+	}
 }

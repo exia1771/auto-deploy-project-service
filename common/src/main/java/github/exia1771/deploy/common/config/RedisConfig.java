@@ -9,17 +9,17 @@ import org.springframework.data.redis.core.RedisTemplate;
 @Configuration
 public class RedisConfig {
 
-    @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory);
+	@Bean
+	public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+		redisTemplate.setConnectionFactory(redisConnectionFactory);
 
-        redisTemplate.setKeySerializer(new FastJsonRedisSerializer<>(String.class));
-        redisTemplate.setHashKeySerializer(new FastJsonRedisSerializer<>(String.class));
-        redisTemplate.setValueSerializer(new FastJsonRedisSerializer<>(String.class));
-        redisTemplate.setHashValueSerializer(new FastJsonRedisSerializer<>(String.class));
+		redisTemplate.setKeySerializer(new FastJsonRedisSerializer<>(String.class));
+		redisTemplate.setHashKeySerializer(new FastJsonRedisSerializer<>(String.class));
+		redisTemplate.setValueSerializer(new FastJsonRedisSerializer<>(String.class));
+		redisTemplate.setHashValueSerializer(new FastJsonRedisSerializer<>(String.class));
 
-        return redisTemplate;
-    }
+		return redisTemplate;
+	}
 
 }

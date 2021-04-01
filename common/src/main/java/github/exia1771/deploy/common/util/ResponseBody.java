@@ -4,21 +4,21 @@ import lombok.Data;
 
 @Data
 public class ResponseBody {
-    private final long timestamp = System.currentTimeMillis();
-    private Object data;
-    private String message;
-    private int status;
+	private final long timestamp = System.currentTimeMillis();
+	private Object data;
+	private String message;
+	private int status;
 
-    public ResponseBody() {
-    }
+	public ResponseBody() {
+	}
 
-    public ResponseBody(Object data) {
-        this.data = data;
-    }
+	public ResponseBody(Object data) {
+		this.data = data;
+	}
 
-    public ResponseBody(Object data, String message) {
-        this.data = data;
-        this.message = message;
-    }
+	public ResponseBody(Object data, String message) {
+		this.data = data;
+		this.message = message;
+	}
 
 }

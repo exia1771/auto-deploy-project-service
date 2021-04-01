@@ -7,10 +7,10 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class FileDTO extends AbstractDTO<String> {
 
-    public static final String FILE_EXT_DELIMITER = ".";
-    public static final String FILE_SEPARATOR = "/";
+	public static final String FILE_EXT_DELIMITER = ".";
+	public static final String FILE_SEPARATOR = "/";
 
-    private String fileName;
-    private String url;
+	private String fileName;
+	private String url;
 
 }

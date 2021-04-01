@@ -11,9 +11,9 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 public class Image extends AbstractWebEntity {
 
-    private String id;
-    private List<String> repoTags;
-    private Map<String, Object> labels;
-    private String parentId;
+	private String id;
+	private List<String> repoTags;
+	private Map<String, Object> labels;
+	private String parentId;
 
 }

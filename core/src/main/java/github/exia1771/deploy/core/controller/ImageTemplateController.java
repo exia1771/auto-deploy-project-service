@@ -15,50 +15,50 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class ImageTemplateController {
 
-    private final ImageTemplateService service;
+	private final ImageTemplateService service;
 
-    @PostMapping("/pageAll")
-    public ResponseEntity<ResponseBody> pageAll(@RequestBody Page<ImageTemplate> page) {
-        return CommonResponse.success(service.pageAll(page));
-    }
+	@PostMapping("/pageAll")
+	public ResponseEntity<ResponseBody> pageAll(@RequestBody Page<ImageTemplate> page) {
+		return CommonResponse.success(service.pageAll(page));
+	}
 
-    @PostMapping("/save")
-    public ResponseEntity<ResponseBody> save(@RequestBody ImageTemplate template, BindingResult result) {
-        return CommonResponse.success(service.save(template));
-    }
+	@PostMapping("/save")
+	public ResponseEntity<ResponseBody> save(@RequestBody ImageTemplate template, BindingResult result) {
+		return CommonResponse.success(service.save(template));
+	}
 
-    @PostMapping("/pageByName")
-    public ResponseEntity<ResponseBody> pageByName(@RequestBody ImageTemplate template) {
-        return CommonResponse.success(service.pageByName(template));
-    }
+	@PostMapping("/pageByName")
+	public ResponseEntity<ResponseBody> pageByName(@RequestBody ImageTemplate template) {
+		return CommonResponse.success(service.pageByName(template));
+	}
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ResponseBody> deleteById(@PathVariable("id") String id) {
-        return CommonResponse.success(service.deleteById(id));
-    }
+	@DeleteMapping("/delete/{id}")
+	public ResponseEntity<ResponseBody> deleteById(@PathVariable("id") String id) {
+		return CommonResponse.success(service.deleteById(id));
+	}
 
-    @GetMapping("/name")
-    public ResponseEntity<ResponseBody> findDistinctTemplateName() {
-        return CommonResponse.success(service.findDistinctTemplateName());
-    }
+	@GetMapping("/name")
+	public ResponseEntity<ResponseBody> findDistinctTemplateName() {
+		return CommonResponse.success(service.findDistinctTemplateName());
+	}
 
-    @GetMapping("/name/{keyword}")
-    public ResponseEntity<ResponseBody> findTemplateNameByKeyword(@PathVariable("keyword") String keyword) {
-        return CommonResponse.success(service.findTemplateNameByKeyword(keyword));
-    }
+	@GetMapping("/name/{keyword}")
+	public ResponseEntity<ResponseBody> findTemplateNameByKeyword(@PathVariable("keyword") String keyword) {
+		return CommonResponse.success(service.findTemplateNameByKeyword(keyword));
+	}
 
-    @GetMapping("/tag/{templateName}")
-    public ResponseEntity<ResponseBody> findTagsByTemplateName(@PathVariable("templateName") String templateName) {
-        return CommonResponse.success(service.findTagsByTemplateName(templateName));
-    }
+	@GetMapping("/tag/{templateName}")
+	public ResponseEntity<ResponseBody> findTagsByTemplateName(@PathVariable("templateName") String templateName) {
+		return CommonResponse.success(service.findTagsByTemplateName(templateName));
+	}
 
-    @GetMapping("/find")
-    public ResponseEntity<ResponseBody> findTemplateIdByTemplateNameAndTag(ImageTemplate template) {
-        return CommonResponse.success(service.findIdByTemplateNameAndTag(template));
-    }
+	@GetMapping("/find")
+	public ResponseEntity<ResponseBody> findTemplateIdByTemplateNameAndTag(ImageTemplate template) {
+		return CommonResponse.success(service.findIdByTemplateNameAndTag(template));
+	}
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ResponseBody> findTemplateById(@PathVariable("id") String id) {
-        return CommonResponse.success(service.findById(id).toDTO());
-    }
+	@GetMapping("/{id}")
+	public ResponseEntity<ResponseBody> findTemplateById(@PathVariable("id") String id) {
+		return CommonResponse.success(service.findById(id).toDTO());
+	}
 }

@@ -11,6 +11,7 @@
         <module>common</module>
         <module>core</module>
         <module>index</module>
+        <module>admin</module>
     </modules>
     <packaging>pom</packaging>
 

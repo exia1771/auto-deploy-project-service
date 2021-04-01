@@ -9,19 +9,19 @@ import github.exia1771.deploy.core.entity.Project;
 
 public interface ProjectService extends BaseService<String, Project> {
 
-    long DEFAULT_CURRENT = 0L;
-    long DEFAULT_SIZE = 10L;
+	long DEFAULT_CURRENT = 0L;
+	long DEFAULT_SIZE = 10L;
 
-    IPage<ProjectDTO> findProjectsByCurrentUser(Pageable pageable);
+	IPage<ProjectDTO> findProjectsByCurrentUser(Pageable pageable);
 
-    default IPage<ProjectDTO> findProjectsByCurrentUser() {
-        return findProjectsByCurrentUser(new Project() {{
-            setCurrent(DEFAULT_CURRENT);
-            setSize(DEFAULT_SIZE);
-        }});
-    }
+	default IPage<ProjectDTO> findProjectsByCurrentUser() {
+		return findProjectsByCurrentUser(new Project() {{
+			setCurrent(DEFAULT_CURRENT);
+			setSize(DEFAULT_SIZE);
+		}});
+	}
 
-    IPage<Project> findProjectsByUserId(String userId, long current, long size);
+	IPage<Project> findProjectsByUserId(String userId, long current, long size);
 
-    IPage<ProjectDTO> findPagedProjectsByKeyword(String keyword, Pageable pageable);
+	IPage<ProjectDTO> findPagedProjectsByKeyword(String keyword, Pageable pageable);
 }

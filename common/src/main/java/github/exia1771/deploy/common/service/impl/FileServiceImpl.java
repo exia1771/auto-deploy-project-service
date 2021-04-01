@@ -29,12 +29,12 @@ public class FileServiceImpl implements FileService {
 	}
 
 	private void validateFile(MultipartFile file, FileRequest request) {
-        if (request.getMaxSize() != null) {
-            long size = file.getSize();
-            if (size > request.getMaxSize()) {
-                throw new ServiceException("文件的大小不能超过" + (request.getMaxSize() / 1024 / 1024) + "M");
-            }
-        }
+		if (request.getMaxSize() != null) {
+			long size = file.getSize();
+			if (size > request.getMaxSize()) {
+				throw new ServiceException("文件的大小不能超过" + (request.getMaxSize() / 1024 / 1024) + "M");
+			}
+		}
 
 		if (request.getFileType() != null) {
 			String contentType = file.getContentType();
@@ -62,13 +62,13 @@ public class FileServiceImpl implements FileService {
 		String fileName = fileRequest.getFileName() == null ? file.getName() : fileRequest.getFileName();
 		File filePath = new File(workPath + fileRequest.getDirectory(), fileName);
 
-        if (!filePath.getParentFile().exists()) {
-            FileUtil.mkParentDirs(filePath);
-        }
+		if (!filePath.getParentFile().exists()) {
+			FileUtil.mkParentDirs(filePath);
+		}
 
-        try {
-            file.transferTo(filePath);
-        } catch (IOException e) {
+		try {
+			file.transferTo(filePath);
+		} catch (IOException e) {
 			throw new ServiceException(e.getMessage());
 		}
 

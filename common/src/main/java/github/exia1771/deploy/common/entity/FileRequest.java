@@ -7,9 +7,9 @@ import java.util.List;
 @Data
 public class FileRequest {
 
-    private String fileName;
-    private Long maxSize;
-    private List<String> fileType;
-    private String directory;
+	private String fileName;
+	private Long maxSize;
+	private List<String> fileType;
+	private String directory;
 
 }

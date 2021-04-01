@@ -17,20 +17,20 @@ import java.util.Map;
 
 public abstract class Tokens {
 
-    public static final String TOKEN_KEY = "Authorization";
-    public static final String TOKEN_PREFIX = "Bearer ";
-    public static final String TOKEN_COOKIE_DOMAIN = "localhost";
-    public static final String TOKEN_COOKIE_PATH = "/";
-    public static final String TOKEN_ILLEGAL = "授权违法，需要重新登录!";
-    public static final String TOKEN_NOT_FOUND = "请重新登录!";
-    public static final String TOKEN_ILLEGAL_OR_EXPIRATION = "授权违法或过期，需要重新登录!";
+	public static final String TOKEN_KEY = "Authorization";
+	public static final String TOKEN_PREFIX = "Bearer ";
+	public static final String TOKEN_COOKIE_DOMAIN = "localhost";
+	public static final String TOKEN_COOKIE_PATH = "/";
+	public static final String TOKEN_ILLEGAL = "授权违法，需要重新登录!";
+	public static final String TOKEN_NOT_FOUND = "请重新登录!";
+	public static final String TOKEN_ILLEGAL_OR_EXPIRATION = "授权违法或过期，需要重新登录!";
 
-    private static final Key KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private static final String SUBJECT = "EXIA1771";
-    private static final Duration DEATH_MINUTES = Duration.ofMinutes(5);
-    public static final Duration EXPIRATION_MINUTES = Duration.ofMinutes(30);
+	private static final Key KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+	private static final String SUBJECT = "EXIA1771";
+	private static final Duration DEATH_MINUTES = Duration.ofMinutes(5);
+	public static final Duration EXPIRATION_MINUTES = Duration.ofMinutes(30);
 
-    public static String create(Map<String, Object> map) {
+	public static String create(Map<String, Object> map) {
 		Date now = DateUtil.now();
 		Date expiration = DateUtil.plus(now, EXPIRATION_MINUTES);
 		return Jwts.builder()
@@ -43,23 +43,23 @@ public abstract class Tokens {
 				.compact();
 	}
 
-    public static Claims parse(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(KEY)
-                .requireSubject(SUBJECT)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
+	public static Claims parse(String token) {
+		return Jwts.parserBuilder()
+				.setSigningKey(KEY)
+				.requireSubject(SUBJECT)
+				.build()
+				.parseClaimsJws(token)
+				.getBody();
+	}
 
-    public static void setCookie(HttpServletResponse response, String token) throws UnsupportedEncodingException {
-        Cookie cookie = new Cookie(Tokens.TOKEN_KEY, URLEncoder.encode(Tokens.TOKEN_PREFIX, StandardCharsets.UTF_8.displayName()) + token);
-        cookie.setDomain(Tokens.TOKEN_COOKIE_DOMAIN);
-        cookie.setPath(Tokens.TOKEN_COOKIE_PATH);
-        response.addCookie(cookie);
-    }
+	public static void setCookie(HttpServletResponse response, String token) throws UnsupportedEncodingException {
+		Cookie cookie = new Cookie(Tokens.TOKEN_KEY, URLEncoder.encode(Tokens.TOKEN_PREFIX, StandardCharsets.UTF_8.displayName()) + token);
+		cookie.setDomain(Tokens.TOKEN_COOKIE_DOMAIN);
+		cookie.setPath(Tokens.TOKEN_COOKIE_PATH);
+		response.addCookie(cookie);
+	}
 
-    public static Boolean isWillExpire(String token) {
+	public static Boolean isWillExpire(String token) {
 		Claims parse = parse(token);
 		Date expiration = parse.getExpiration();
 		Duration minus = DateUtil.minus(DateUtil.now(), expiration);

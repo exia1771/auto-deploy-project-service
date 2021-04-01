@@ -8,13 +8,13 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @ConfigurationProperties(prefix = "file")
 public class FileProperties {
 
-    @NestedConfigurationProperty
+	@NestedConfigurationProperty
 	private Upload upload;
 	private String scheme;
 
-    @Data
-    public static class Upload{
-        private String root;
-        private String mappingUrl;
-    }
+	@Data
+	public static class Upload {
+		private String root;
+		private String mappingUrl;
+	}
 }
