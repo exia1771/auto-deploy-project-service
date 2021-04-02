@@ -29,13 +29,19 @@ import github.exia1771.deploy.core.service.docker.ContainerService;
 import github.exia1771.deploy.core.service.jenkins.JenkinsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -50,16 +56,22 @@ public class ProjectContainerServiceImpl extends BaseServiceImpl<String, Project
 	private final ProjectContainerMapper mapper;
 
 	private static final String REPOSITORY_SUFFIX = ".git";
-	private static final String GITHUB_API_URL = "https://api.github.com/repos/";
+
 	private static final String GITHUB_URL_PREFIX = "https://github.com/";
+	private static final String GITHUB_API_URL = "https://api.github.com/repos/";
 	private static final String GITHUB_TAGS_API_SUFFIX = "/git/refs/tags";
+
+	private static final String GITEE_URL_PREFIX = "https://gitee.com/";
+	private static final String GITEE_API_URL = "https://gitee.com/api/v5/repos/";
+	private static final String GITEE_TAGS_API_SUFFIX = "/tags";
+
 
 	private static final String TAG_COLUMN = "git_tag";
 	private static final String PUB_DATE_COLUMN = "pub_date";
 	private static final String PUBLISHER_COLUMN = "publisher";
-	private static final String ID_COLUMN = "id";
 	private static final String NAMESPACE_COLUMN = "namespace_id";
 	private static final String PROJECT_ID_COLUMN = "project_id";
+
 
 	private static final BlockingQueue<ProjectContainer> BUILD_BLOCKING_QUEUE = new ArrayBlockingQueue<>(2);
 
@@ -117,10 +129,32 @@ public class ProjectContainerServiceImpl extends BaseServiceImpl<String, Project
 	public List<String> findRepositoryTags(String projectId, String keyword) {
 		Project project = projectService.findById(projectId);
 		String gitUrl = project.getGitUrl();
-		String suffix = gitUrl.split(GITHUB_URL_PREFIX)[1];
-		suffix = suffix.replaceAll(REPOSITORY_SUFFIX, "");
+
+
+		String ownerRepo;
+		boolean isGitHub;
+		if (gitUrl.startsWith(GITEE_URL_PREFIX)) {
+			ownerRepo = gitUrl.split(GITEE_URL_PREFIX)[1];
+			isGitHub = false;
+		} else if (gitUrl.startsWith(GITHUB_URL_PREFIX)) {
+			ownerRepo = gitUrl.split(GITHUB_URL_PREFIX)[1];
+			isGitHub = true;
+		} else {
+			throw new ServiceException("不支持的Git类型，目前只有Gitee, GitHub");
+		}
+
+		ownerRepo = ownerRepo.replaceAll(REPOSITORY_SUFFIX, "");
+
+		if (isGitHub) {
+			return parseGitHub(keyword, ownerRepo);
+		} else {
+			return parseGitEE(keyword, ownerRepo);
+		}
+	}
+
+	private List<String> parseGitHub(String keyword, String ownerRepo) {
 		try {
-			String json = restTemplate.getForObject(GITHUB_API_URL + suffix + GITHUB_TAGS_API_SUFFIX, String.class);
+			String json = restTemplate.getForObject(GITHUB_API_URL + ownerRepo + GITHUB_TAGS_API_SUFFIX, String.class);
 			JSONArray array = JSON.parseArray(json);
 			if (array == null) {
 				return new ArrayList<>();
@@ -130,6 +164,25 @@ public class ProjectContainerServiceImpl extends BaseServiceImpl<String, Project
 						JSONObject temp = (JSONObject) o;
 						String ref = temp.getString("ref");
 						return ref.substring(ref.lastIndexOf("/") + 1);
+					})
+					.filter(s -> s.contains(keyword))
+					.collect(Collectors.toList());
+		} catch (HttpClientErrorException.NotFound e) {
+			return new ArrayList<>();
+		}
+	}
+
+	private List<String> parseGitEE(String keyword, String ownerRepo) {
+		try {
+			String json = restTemplate.getForObject(GITEE_API_URL + ownerRepo + GITEE_TAGS_API_SUFFIX, String.class);
+			JSONArray array = JSON.parseArray(json);
+			if (array == null) {
+				return new ArrayList<>();
+			}
+			return array.stream()
+					.map(o -> {
+						JSONObject temp = (JSONObject) o;
+						return temp.getString("name");
 					})
 					.filter(s -> s.contains(keyword))
 					.collect(Collectors.toList());
@@ -260,9 +313,37 @@ public class ProjectContainerServiceImpl extends BaseServiceImpl<String, Project
 		return "";
 	}
 
+
+	@Override
+	public void getContainerLogStream(String projectContainerId, long timestamp, HttpServletResponse response) {
+		final String EXPOSE_HEADERS = "Access-Control-Expose-Headers";
+		ProjectContainer projectContainer = findById(projectContainerId);
+		Resource resource = containerService.getContainerLogStream(projectContainer.getDockerContainerId(), timestamp);
+		if (resource == null) {
+			throw new ServiceException("当前时刻不存在日志");
+		}
+		try {
+			InputStream inputStream = resource.getInputStream();
+			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+			byte[] buffer = new byte[4096];
+			int n;
+			while ((n = (inputStream.read(buffer))) != -1) {
+				byteArrayOutputStream.write(buffer, 0, n);
+			}
+
+			response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+			response.setHeader(EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
+			response.setHeader(HttpHeaders.CONTENT_DISPOSITION, System.currentTimeMillis() + ".log");
+			response.getOutputStream().write(byteArrayOutputStream.toByteArray());
+			byteArrayOutputStream.close();
+		} catch (IOException e) {
+			log.error("获取输入流出错", e);
+		}
+	}
+
 	@Override
 	public ContainerService.Status restartContainer(String projectContainerId) {
-		BoundSetOperations<String, Object> setOps = redisTemplate.boundSetOps("restart");
+		BoundSetOperations<String, Object> setOps = redisTemplate.boundSetOps("status");
 		Boolean isRestarted = setOps.isMember(projectContainerId);
 		if (isRestarted != null && isRestarted) {
 			throw new ServiceException("当前容器正在重启，请勿重复点击");
@@ -270,7 +351,9 @@ public class ProjectContainerServiceImpl extends BaseServiceImpl<String, Project
 			setOps.add(projectContainerId);
 		}
 		ProjectContainer container = findById(projectContainerId);
-		return containerService.restart(container.getDockerContainerId());
+		ContainerService.Status status = containerService.restart(container.getDockerContainerId());
+		setOps.remove(projectContainerId);
+		return status;
 	}
 
 	@Override

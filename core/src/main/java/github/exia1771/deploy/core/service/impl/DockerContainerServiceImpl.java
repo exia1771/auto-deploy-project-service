@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Service
@@ -51,26 +52,32 @@ public class DockerContainerServiceImpl extends DockerContainerEngine implements
 
 	@Override
 	public String getContainerLogs(String containerNameOrId, long since) throws IOException {
-		String url = getServerAddress() + "container/" + containerNameOrId + "/logs?stdout=true&stderr=true&since=" + since;
+		Resource stream = getContainerLogStream(containerNameOrId, since);
+		if (stream == null) {
+			return "当前时刻无日志";
+		}
+		InputStream inputStream = stream.getInputStream();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+		StringBuilder builder = new StringBuilder();
+		reader.lines().forEach(builder::append);
+		byte[] bytes = builder.toString().getBytes();
+		return new String(bytes, StandardCharsets.UTF_8);
+	}
+
+	@Override
+	public Resource getContainerLogStream(String containerNameOrId, long since) {
+		String url = getServerAddress() + "containers/" + containerNameOrId + "/logs?stdout=true&stderr=true&since=" + since;
 		try {
 			ResponseEntity<Resource> responseEntity = getRestTemplate().getForEntity(url, Resource.class);
-			Resource body = responseEntity.getBody();
-			if (body == null) {
-				return "";
-			}
-			InputStream inputStream = body.getInputStream();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-			StringBuilder builder = new StringBuilder();
-			reader.lines().forEach(builder::append);
-			return builder.toString();
+			return responseEntity.getBody();
 		} catch (HttpClientErrorException.NotFound e) {
-			return "";
+			return null;
 		}
 	}
 
 	@Override
 	public Status restart(String containerNameOrId) {
-		String url = getServerAddress() + "container/" + containerNameOrId + "/restart";
+		String url = getServerAddress() + "containers/" + containerNameOrId + "/restart";
 		try {
 			getRestTemplate().postForObject(url, null, String.class);
 			return Status.SUCCESS;

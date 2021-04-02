@@ -7,6 +7,7 @@ import github.exia1771.deploy.core.entity.ProjectContainer;
 import github.exia1771.deploy.core.entity.ProjectContainerSearch;
 import github.exia1771.deploy.core.service.docker.ContainerService;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public interface ProjectContainerService extends BaseService<String, ProjectContainer> {
@@ -20,6 +21,8 @@ public interface ProjectContainerService extends BaseService<String, ProjectCont
 	String stopBuild(String projectContainerId);
 
 	String getContainerLog(String projectContainerId, long timestamp);
+
+	void getContainerLogStream(String projectContainerId, long timestamp, HttpServletResponse response);
 
 	ContainerService.Status restartContainer(String projectContainerId);
 }

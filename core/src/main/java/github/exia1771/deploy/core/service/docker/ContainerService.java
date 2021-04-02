@@ -4,6 +4,7 @@ package github.exia1771.deploy.core.service.docker;
 import github.exia1771.deploy.core.entity.Container;
 import github.exia1771.deploy.core.entity.DockerRemoteApiParam;
 import lombok.Getter;
+import org.springframework.core.io.Resource;
 
 import java.io.IOException;
 
@@ -28,6 +29,8 @@ public interface ContainerService extends RemoteApi<Container, DockerRemoteApiPa
 	}
 
 	String getContainerLogs(String containerNameOrId, long since) throws IOException;
+
+	Resource getContainerLogStream(String containerNameOrId, long since);
 
 	Status restart(String containerNameOrId);
 }

@@ -23,7 +23,7 @@ public class NamespaceServiceImpl extends BaseServiceImpl<String, Namespace> imp
 	}
 
 	@Override
-	protected void beforeInsert(Namespace namespace) {
+	protected void beforeSave(Namespace namespace) {
 		QueryWrapper<Namespace> wrapper = new QueryWrapper<>();
 		wrapper.eq(NAME_COLUMN, namespace.getName());
 		if (isExisted(wrapper)) {

@@ -27,6 +27,7 @@ jenkins-client:
   host: http://${spring.redis.host}:8080
   admin: exia1771
   password: xww19990712
+  gitType: gitee
 
 deploy:
   docker:

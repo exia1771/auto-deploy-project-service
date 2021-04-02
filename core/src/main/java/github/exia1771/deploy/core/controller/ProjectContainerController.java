@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
 @RestController
 @RequestMapping("/project/container")
 @AllArgsConstructor
@@ -57,6 +59,14 @@ public class ProjectContainerController {
 	@GetMapping("/log")
 	public ResponseEntity<ResponseBody> findContainerLogById(@RequestParam("id") String id, @RequestParam("since") long timestamp) {
 		return CommonResponse.success(service.getContainerLog(id, timestamp));
+	}
+
+	@PostMapping("/log")
+	public ResponseEntity<ResponseBody> findContainerLogStream(@RequestParam("id") String id,
+															   @RequestParam("since") long timestamp,
+															   HttpServletResponse response) {
+		service.getContainerLogStream(id, timestamp, response);
+		return CommonResponse.success();
 	}
 
 	@PostMapping("/restart/{id}")

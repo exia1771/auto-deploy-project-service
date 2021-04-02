@@ -23,7 +23,7 @@ public class AdminTemplateController {
 
 	@PostMapping("/find")
 	public ResponseEntity<ResponseBody> findPaged(@RequestBody SearchEntity entity) {
-		return CommonResponse.success(service.findPagedDTO(entity));
+		return CommonResponse.success(service.findPaged(entity));
 	}
 
 	@PostMapping("/save")

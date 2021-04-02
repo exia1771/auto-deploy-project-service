@@ -24,4 +24,5 @@ public interface ProjectService extends BaseService<String, Project> {
 	IPage<Project> findProjectsByUserId(String userId, long current, long size);
 
 	IPage<ProjectDTO> findPagedProjectsByKeyword(String keyword, Pageable pageable);
+
 }

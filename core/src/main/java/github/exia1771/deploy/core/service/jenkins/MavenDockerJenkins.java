@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class MavenDockerJenkins extends AbstractJenkinsService {
@@ -47,7 +48,8 @@ public class MavenDockerJenkins extends AbstractJenkinsService {
 		Map<String, Object> map = new HashMap<>();
 		Project project = projectService.findById(projectContainer.getProjectId());
 		map.put("gitUrl", project.getGitUrl());
-		map.put("tag", projectContainer.getGitTag());
+		map.put("uuid", UUID.randomUUID().toString());
+		map.put("tag", "${Tag}");
 		String buildCommand = projectContainer.getBuildCommand();
 		if (StringUtil.isNotBlank(buildCommand) && buildCommand.startsWith("mvn")) {
 			buildCommand = buildCommand.replaceAll("mvn", "");
@@ -120,7 +122,9 @@ public class MavenDockerJenkins extends AbstractJenkinsService {
 		}
 
 		builder.append(" ")
-				.append(imageTemplate.getDockerImageId());
+				.append(projectContainer.getDockerContainerId())
+				.append(":")
+				.append(TAG_SUFFIX);
 		return builder.append(System.lineSeparator()).toString();
 	}
 

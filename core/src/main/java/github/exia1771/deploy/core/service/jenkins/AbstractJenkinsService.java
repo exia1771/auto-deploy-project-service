@@ -19,6 +19,7 @@ import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -52,7 +53,11 @@ public abstract class AbstractJenkinsService implements JenkinsService {
 			server.updateJob(jobName, getBuildXml(build));
 		}
 		job = server.getJob(jobName);
-		job.build();
+
+		Map<String, String> map = new HashMap<>();
+		map.put("Tag", build.getGitTag());
+		job.build(map);
+
 		build.setJenkinsBuildNumber(job.getNextBuildNumber());
 		BuildResult result = null;
 		while (result == null) {
@@ -82,9 +87,13 @@ public abstract class AbstractJenkinsService implements JenkinsService {
 
 	@Override
 	public String getBuildLog(String jobName, int buildNumber) throws IOException {
-		JobWithDetails job = server.getJob(jobName);
-		Build build = job.getBuildByNumber(buildNumber);
-		return build.details().getConsoleOutputText();
+		try {
+			JobWithDetails job = server.getJob(jobName);
+			Build build = job.getBuildByNumber(buildNumber);
+			return build.details().getConsoleOutputText();
+		} catch (NullPointerException e) {
+			return "请稍后，正在部署";
+		}
 	}
 
 	private String getBuildXml(ProjectContainer projectContainer) throws IOException {

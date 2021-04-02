@@ -138,7 +138,8 @@ public abstract class BaseServiceImpl<K extends Serializable, T extends Abstract
 		return isExisted(wrapper);
 	}
 
-	public Boolean isExisted(Wrapper<T> wrapper) {
+	@Override
+	public boolean isExisted(Wrapper<T> wrapper) {
 		List<T> list = mapper.selectList(wrapper);
 		return list != null && list.size() >= 1;
 	}
