@@ -9,4 +9,5 @@ public interface ProjectConfigService extends BaseService<String, ProjectConfig>
 
 	ProjectConfigDTO findByProjectIdAndNamespaceId(String projectId, String namespaceId);
 
+	void deleteByProjectId(String projectId);
 }

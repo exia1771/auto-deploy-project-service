@@ -3,6 +3,7 @@ package github.exia1771.deploy.common.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import github.exia1771.deploy.common.entity.Dept;
 import github.exia1771.deploy.common.entity.User;
+import github.exia1771.deploy.common.entity.dto.UserDTO;
 import github.exia1771.deploy.common.exception.ServiceException;
 import github.exia1771.deploy.common.mapper.DeptMapper;
 import github.exia1771.deploy.common.service.DeptService;
@@ -11,6 +12,9 @@ import github.exia1771.deploy.common.util.StringUtil;
 import github.exia1771.deploy.common.util.Validators;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class DeptServiceImpl extends BaseServiceImpl<String, Dept> implements DeptService {
@@ -40,9 +44,21 @@ public class DeptServiceImpl extends BaseServiceImpl<String, Dept> implements De
 
 	@Override
 	protected void beforeDelete(String id) {
-		User user = userService.findById(id);
+		User user = userService.findById(getCurrentUser().getUserId());
 		if (StringUtil.isNotBlank(user.getDeptId()) && user.getDeptId().equals(id)) {
 			throw new ServiceException("无法删除自己所在部门");
 		}
+
+		List<UserDTO> userDTOList = userService.findByDeptId(id);
+		List<User> userList = new ArrayList<>();
+		for (UserDTO userDTO : userDTOList) {
+			User u = new User();
+			u.setId(userDTO.getId());
+			u.setDeptId(null);
+			userList.add(u);
+		}
+
+		userService.batchUpdateDeptId(userList);
 	}
+
 }

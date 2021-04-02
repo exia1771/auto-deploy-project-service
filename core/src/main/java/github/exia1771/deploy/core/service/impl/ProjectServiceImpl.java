@@ -116,7 +116,8 @@ public class ProjectServiceImpl extends BaseServiceImpl<String, Project> impleme
 	protected void validateDeletePri(String id) {
 		String projectMasterName = findById(id).getUsername();
 		User currentUser = userService.findById(getCurrentUser().getUserId());
-		if (!projectMasterName.equals(currentUser.getUsername())) {
+		Role role = roleService.findById(currentUser.getRoleId());
+		if ((!projectMasterName.equals(currentUser.getUsername())) && (!role.getName().equals(Role.Type.ADMIN.getName()))) {
 			throw new ValidationException("该账号没有删除权限");
 		}
 	}

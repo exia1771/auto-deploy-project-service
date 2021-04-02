@@ -1,21 +1,20 @@
 package github.exia1771.deploy.admin.controller;
 
 import github.exia1771.deploy.admin.entity.SearchEntity;
-import github.exia1771.deploy.admin.service.AdminDeptService;
-import github.exia1771.deploy.common.entity.Dept;
+import github.exia1771.deploy.admin.service.AdminProjectService;
 import github.exia1771.deploy.common.util.CommonResponse;
 import github.exia1771.deploy.common.util.ResponseBody;
+import github.exia1771.deploy.core.entity.Project;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
-@RequestMapping("/admin/dept")
 @RestController
+@RequestMapping("/admin/project")
 @AllArgsConstructor
-public class AdminDeptController {
+public class AdminProjectController {
 
-	private final AdminDeptService service;
+	private final AdminProjectService service;
 
 	@GetMapping("/all")
 	public ResponseEntity<ResponseBody> findAll() {
@@ -28,8 +27,8 @@ public class AdminDeptController {
 	}
 
 	@PostMapping("/save")
-	public ResponseEntity<ResponseBody> save(@RequestBody Dept dept) {
-		service.save(dept);
+	public ResponseEntity<ResponseBody> save(@RequestBody Project project) {
+		service.save(project);
 		return CommonResponse.success();
 	}
 
@@ -38,6 +37,5 @@ public class AdminDeptController {
 		service.deleteById(id);
 		return CommonResponse.success();
 	}
-
 
 }

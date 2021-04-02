@@ -113,4 +113,11 @@ public class ProjectUserServiceImpl extends BaseServiceImpl<String, ProjectUser>
 		}).collect(Collectors.toList());
 		return batchAddProjectMember(collect);
 	}
+
+	@Override
+	public void deleteByProjectId(String projectId) {
+		QueryWrapper<ProjectUser> wrapper = new QueryWrapper<>();
+		wrapper.eq(PROJECT_ID_COLUMN, projectId);
+		mapper.delete(wrapper);
+	}
 }

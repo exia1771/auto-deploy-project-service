@@ -10,7 +10,6 @@ public class ProjectDTO extends AbstractDTO<String> {
 
 	private String username;
 	private String templateId;
-	private String configId;
 	private String name;
 	private String description;
 	private String identification;

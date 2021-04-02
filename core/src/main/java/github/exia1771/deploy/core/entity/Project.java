@@ -17,7 +17,6 @@ public class Project extends AbstractEntity<String> implements Pageable {
 	private String description;
 	private String identification;
 	private String gitUrl;
-//    private int state;
 
 	private transient Long current;
 	private transient Long size;

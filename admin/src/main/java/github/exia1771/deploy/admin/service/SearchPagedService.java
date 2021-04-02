@@ -43,4 +43,6 @@ public interface SearchPagedService<T extends AbstractEntity<K>, K extends Seria
 	QueryWrapper<T> getWrapper(SearchEntity entity);
 
 	BaseService<K, T> getService();
+
+	void deleteById(K id);
 }

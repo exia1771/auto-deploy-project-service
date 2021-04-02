@@ -243,7 +243,7 @@ public class UserServiceImpl extends BaseServiceImpl<String, User> implements Us
 	public List<UserDTO> findByNotHaveDeptId() {
 		QueryWrapper<User> wrapper = new QueryWrapper<>();
 		wrapper.eq(DEPT_ID_COLUMN, "");
-		wrapper.or(q -> q.eq(DEPT_ID_COLUMN, null));
+		wrapper.or(q -> q.isNull(DEPT_ID_COLUMN));
 		List<User> users = mapper.selectList(wrapper);
 		return users.stream().map(User::toDTO).collect(Collectors.toList());
 	}
@@ -275,20 +275,31 @@ public class UserServiceImpl extends BaseServiceImpl<String, User> implements Us
 			map.put(userDTO.getId(), temp);
 		}
 
-		// 根据传入的用户ID查找出的部门ID全部置为deptId，map的Key就是需要更新的列表
-		// count 计数 以免不必要的更新
-		int count = 0;
+		int before = map.size();
+		int after = 0;
+		// 根据传入的用户ID查找出的部门ID全部置为deptId，map的Key就是需要更新的用户列表
 		for (User user : users) {
 			user.setDeptId(deptId);
 			if (map.containsKey(user.getId())) {
-				count++;
+				after++;
 			}
 			map.put(user.getId(), user);
 		}
 
-		if (count == originUser.size()) {
+		// 如果传入的ID列表个数与数据库一致 且 更新前后数量相同则不需要更新
+		if (originUser.size() == userId.size() && before == after) {
 			return;
 		}
+
 		mapper.batchUpdateDeptId(new ArrayList<>(map.values()));
+	}
+
+
+	@Override
+	public void batchUpdateDeptId(List<User> users) {
+		for (User user : users) {
+			Validators.requireLength("用户ID", user.getId(), 1, 255, true);
+		}
+		mapper.batchUpdateDeptId(users);
 	}
 }

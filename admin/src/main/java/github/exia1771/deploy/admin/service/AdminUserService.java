@@ -13,8 +13,6 @@ public interface AdminUserService extends SearchPagedService<User, String> {
 
 	void logout();
 
-	void deleteById(String id);
-
 	List<UserDTO> findUsersNotHaveDeptId();
 
 	List<UserDTO> findUsersByDeptId(String id);

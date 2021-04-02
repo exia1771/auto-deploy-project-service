@@ -36,4 +36,6 @@ public interface UserService extends BaseService<String, User> {
 	List<UserDTO> findByNotHaveDeptId();
 
 	void batchUpdateDeptId(String deptId, List<String> userId);
+
+	void batchUpdateDeptId(List<User> users);
 }

@@ -68,4 +68,11 @@ public class ProjectConfigServiceImpl extends BaseServiceImpl<String, ProjectCon
 		}
 		return projectConfig.toDTO();
 	}
+
+	@Override
+	public void deleteByProjectId(String projectId) {
+		QueryWrapper<ProjectConfig> wrapper = new QueryWrapper<>();
+		wrapper.eq(PROJECT_COLUMN, projectId);
+		mapper.delete(wrapper);
+	}
 }

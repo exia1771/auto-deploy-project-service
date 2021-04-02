@@ -18,4 +18,6 @@ public interface ImageTemplateService extends BaseService<String, ImageTemplate>
 	List<ImageTemplateDTO> findTagsByTemplateName(String templateName);
 
 	ImageTemplate findIdByTemplateNameAndTag(ImageTemplate template);
+
+	List<ImageTemplate> findByName(String name);
 }

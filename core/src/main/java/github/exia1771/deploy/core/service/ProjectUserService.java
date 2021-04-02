@@ -27,4 +27,6 @@ public interface ProjectUserService extends BaseService<String, ProjectUser> {
 	int batchRemoveProjectMember(List<ProjectUser> projectUsers);
 
 	int batchUpdate(String projectId, List<String> userId);
+
+	void deleteByProjectId(String projectId);
 }
